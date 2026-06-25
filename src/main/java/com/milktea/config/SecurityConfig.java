@@ -2,6 +2,7 @@ package com.milktea.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,36 +29,60 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/webjars/**",
-                                "/login"
+                                "/login",
+                                "/menu/**",
+                                "/order-at-table/**",
+                                "/decrease-order/**",
+                                "/table-order/**",
+                                "/edit-note",
+                                "/save-note"
                         ).permitAll()
 
-                        .requestMatchers(
-                                "/users/**",
-                                "/categories/**"
-                        )
-                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/products",
+                                "/products/search"
+                        ).hasAnyRole("ADMIN", "STAFF")
 
-                        .requestMatchers("/ingredients/**")
-                        .hasAnyRole("ADMIN","STAFF")
+                        .requestMatchers(
+                                "/products/add",
+                                "/products/save",
+                                "/products/edit/**",
+                                "/products/delete/**"
+                        ).hasAnyRole("ADMIN", "STAFF")
 
                         .requestMatchers(
                                 "/vouchers/**"
-                        )
-                        .hasAnyRole("ADMIN","CUSTOMER")
+                        ).hasRole("ADMIN")
 
                         .requestMatchers(
-                                "/products/**"
-                        )
-                        .hasAnyRole("ADMIN","STAFF","CUSTOMER")
+                                "/customer/menu",
+                                "/customer-menu/**",
+                                "/customer-cart/**",
+                                "/customer-order/**",
+                                "/customer/orders",
+                                "/my-orders/**"
+                        ).hasRole("CUSTOMER")
 
                         .requestMatchers(
+                                "/",
+                                "/users/**",
+                                "/roles/**",
+                                "/categories/**"
+                        ).hasAnyRole("ADMIN", "STAFF")
+
+                        .requestMatchers(
+                                "/ingredients/**",
                                 "/customers/**",
                                 "/orders/**",
                                 "/invoices/**",
+                                "/invoice/**",
+                                "/orderdetails/**",
                                 "/payments/**",
-                                "/tables/**"
-                        )
-                                .hasAnyRole("ADMIN","STAFF")
+                                "/tables/**",
+                                "/transactions/**",
+                                "/product-ingredients/**",
+                                "/table-payment/**"
+                        ).hasAnyRole("ADMIN", "STAFF")
 
                         .anyRequest()
                         .authenticated()
