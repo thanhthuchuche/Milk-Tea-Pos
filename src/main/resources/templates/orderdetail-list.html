@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết đơn hàng</title>
+</head>
+<body>
+
+<h1>Chi tiết đơn hàng</h1>
+
+<a href="/orderdetails/add">
+    Thêm chi tiết đơn hàng
+</a>
+
+<br><br>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Đơn hàng</th>
+        <th>Sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Đơn giá</th>
+        <th>Thành tiền</th>
+        <th>Thao tác</th>
+    </tr>
+
+    <tr th:each="detail : ${orderDetails}">
+
+        <td th:text="${detail.orderDetailId}"></td>
+
+        <td th:text="${detail.orders != null ? detail.orders.orderId : 'N/A'}"></td>
+
+        <td th:text="${detail.product != null ? detail.product.productName : 'N/A'}"></td>
+
+        <td th:text="${detail.quantity}"></td>
+
+        <td th:text="${detail.price}"></td>
+
+        <td th:text="${detail.subtotal}"></td>
+
+        <td>
+
+            <a th:href="@{/orderdetails/delete/{id}(id=${detail.orderDetailId})}"
+               onclick="return confirm('Bạn có chắc muốn xóa không?')">
+                Xóa
+            </a>
+
+        </td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>

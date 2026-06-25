@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inventory Transaction Form</title>
+</head>
+<body>
+
+<h2>Thông tin giao dịch kho</h2>
+
+<form th:action="@{/transactions/save}"
+      th:object="${transaction}"
+      method="post">
+
+    <input type="hidden"
+           th:field="*{transactionId}">
+
+    <label>Ngày giao dịch:</label>
+    <input type="date"
+           th:field="*{transactionDate}">
+    <br><br>
+
+    <label>Nguyên liệu:</label>
+
+    <select th:field="*{ingredient}">
+        <option th:each="i : ${ingredients}"
+                th:value="${i.ingredientId}"
+                th:text="${i.ingredientName}">
+        </option>
+    </select>
+
+    <br><br>
+
+    <label>Số lượng:</label>
+    <input type="number"
+           th:field="*{quantity}">
+    <br><br>
+
+    <label>Loại giao dịch:</label>
+    <input type="text"
+           th:field="*{transactionType}">
+    <br><br>
+
+    <label>Nhà cung cấp:</label>
+    <input type="text"
+           th:field="*{supplier}">
+    <br><br>
+
+    <label>Ghi chú:</label>
+    <input type="text"
+           th:field="*{note}">
+    <br><br>
+
+    <button type="submit">
+        Lưu
+    </button>
+
+</form>
+
+</body>
+</html>

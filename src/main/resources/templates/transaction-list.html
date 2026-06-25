@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inventory Transaction</title>
+</head>
+<body>
+
+<h2>Danh sách giao dịch kho</h2>
+
+<a href="/transactions/add">Thêm giao dịch</a>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Ngày</th>
+        <th>Nguyên liệu</th>
+        <th>Số lượng</th>
+        <th>Loại</th>
+        <th>Nhà cung cấp</th>
+        <th>Ghi chú</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="t : ${transactions}">
+        <td th:text="${t.transactionId}"></td>
+        <td th:text="${t.transactionDate}"></td>
+        <td th:text="${t.ingredient.ingredientName}"></td>
+        <td th:text="${t.quantity}"></td>
+        <td th:text="${t.transactionType}"></td>
+        <td th:text="${t.supplier}"></td>
+        <td th:text="${t.note}"></td>
+
+        <td>
+            <a th:href="@{/transactions/edit/{id}(id=${t.transactionId})}">
+                Sửa
+            </a>
+
+            |
+
+            <a th:href="@{/transactions/delete/{id}(id=${t.transactionId})}">
+                Xóa
+            </a>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

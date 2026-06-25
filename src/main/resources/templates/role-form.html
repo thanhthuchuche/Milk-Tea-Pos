@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vai trò</title>
+</head>
+<body>
+
+<h2>Thông tin vai trò</h2>
+
+<form th:action="@{/roles/save}"
+      th:object="${role}"
+      method="post">
+
+    <input type="hidden"
+           th:field="*{roleId}">
+
+    <label>Tên vai trò:</label>
+
+    <input type="text"
+           th:field="*{roleName}">
+
+    <br><br>
+
+    <label>Mô tả:</label>
+
+    <input type="text"
+           th:field="*{description}">
+
+    <br><br>
+
+    <button type="submit">
+        Lưu
+    </button>
+
+    <a href="/roles">
+        Quay lại
+    </a>
+
+</form>
+
+</body>
+</html>

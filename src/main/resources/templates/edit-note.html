@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ghi chú món</title>
+</head>
+<body>
+
+<h3>Ghi chú</h3>
+
+<form th:action="@{/save-note}" method="post">
+
+    <input type="hidden"
+           name="detailId"
+           th:value="${detail.orderDetailId}">
+
+    <textarea
+            name="note"
+            rows="5"
+            cols="40"
+            th:text="${detail.note}">
+    </textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Lưu
+    </button>
+
+</form>
+
+</body>
+</html>

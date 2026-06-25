@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm công thức pha chế</title>
+</head>
+<body>
+
+<h2>Thông tin công thức pha chế</h2>
+
+<form th:action="@{/product-ingredients/save}"
+      th:object="${productIngredient}"
+      method="post">
+
+    <input type="hidden"
+           th:field="*{productIngredientId}">
+
+    <label>Sản phẩm:</label>
+
+    <select th:field="*{product}">
+        <option value="">-- Chọn sản phẩm --</option>
+
+        <option th:each="p : ${products}"
+                th:value="${p.productId}"
+                th:text="${p.productName}">
+        </option>
+    </select>
+
+    <br><br>
+
+    <label>Nguyên liệu:</label>
+
+    <select th:field="*{ingredient}">
+        <option value="">-- Chọn nguyên liệu --</option>
+
+        <option th:each="i : ${ingredients}"
+                th:value="${i.ingredientId}"
+                th:text="${i.ingredientName}">
+        </option>
+    </select>
+
+    <br><br>
+
+    <label>Số lượng sử dụng:</label>
+
+    <input type="number"
+           step="0.01"
+           th:field="*{quantityUsed}">
+
+    <br><br>
+
+    <button type="submit">
+        Lưu
+    </button>
+
+    <a href="/product-ingredients">
+        Quay lại
+    </a>
+
+</form>
+
+</body>
+</html>

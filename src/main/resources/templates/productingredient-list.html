@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách công thức pha chế</title>
+</head>
+<body>
+
+<h1>Danh sách công thức pha chế</h1>
+
+<a href="/product-ingredients/add">
+    Thêm công thức
+</a>
+
+<br><br>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Sản phẩm</th>
+        <th>Nguyên liệu</th>
+        <th>Số lượng sử dụng</th>
+        <th>Thao tác</th>
+    </tr>
+
+    <tr th:each="pi : ${productIngredients}">
+
+        <td th:text="${pi.productIngredientId}"></td>
+
+        <td th:text="${pi.product.productName}"></td>
+
+        <td th:text="${pi.ingredient.ingredientName}"></td>
+
+        <td th:text="${pi.quantityUsed}"></td>
+
+        <td>
+
+            <a th:href="@{/product-ingredients/delete/{id}(id=${pi.productIngredientId})}"
+               onclick="return confirm('Bạn có chắc muốn xóa không?')">
+                Xóa
+            </a>
+
+        </td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+body{
+    background-color:#FFF8F0;
+}
+
+.navbar-custom{
+    background-color:#8B5E3C !important;
+}
+
+.card-header{
+    background-color:#8B5E3C !important;
+    color:white !important;
+}
+
+.table thead{
+    background-color:#8B5E3C !important;
+    color:white !important;
+}
+
+.btn-primary{
+    background-color:#F4A261 !important;
+    border-color:#F4A261 !important;
+}
+
+.btn-primary:hover{
+    background-color:#E76F51 !important;
+    border-color:#E76F51 !important;
+}
+
+.btn-success{
+    background-color:#8B5E3C !important;
+    border-color:#8B5E3C !important;
+}
+
+.btn-success:hover{
+    background-color:#6D4C41 !important;
+}
+
+h1,h2,h3,h4,h5{
+    color:#5C4033;
+}

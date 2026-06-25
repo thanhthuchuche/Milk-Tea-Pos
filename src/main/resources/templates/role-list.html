@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách vai trò</title>
+</head>
+<body>
+
+<h2>Danh sách vai trò</h2>
+
+<a href="/roles/add">
+    Thêm vai trò
+</a>
+
+<br><br>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Tên vai trò</th>
+        <th>Mô tả</th>
+        <th>Thao tác</th>
+    </tr>
+
+    <tr th:each="role : ${roles}">
+
+        <td th:text="${role.roleId}"></td>
+
+        <td th:text="${role.roleName}"></td>
+
+        <td th:text="${role.description}"></td>
+
+        <td>
+
+            <a th:href="@{'/roles/delete/' + ${role.roleId}}"
+               onclick="return confirm('Bạn có chắc muốn xóa?')">
+                Xóa
+            </a>
+
+        </td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>

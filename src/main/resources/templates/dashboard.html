@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+  <title>Cô Đào Quán POS Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        rel="stylesheet">
+  <link rel="stylesheet"
+        th:href="@{/css/style.css}">
+
+</head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<h1 class="text-center mb-4 mt-3">
+
+  <i class="fa-solid fa-mug-hot"></i>
+
+  Cô Đào Quán POS Dashboard
+
+</h1>
+<hr>
+<div class="container mt-4">
+
+  <div class="row">
+
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white"
+           style="background-color:#8B5E3C">
+
+        <div class="card-body">
+
+          <h5>
+            <i class="fa-solid fa-cube"></i>
+            Tổng sản phẩm
+          </h5>
+
+          <h2 th:text="${totalProducts}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white"
+           style="background-color:#F4A261">
+        <div class="card-body">
+
+          <h5>
+            <i class="fa-solid fa-users"></i>
+            Tổng khách hàng
+          </h5>
+
+          <h2 th:text="${totalCustomers}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white"
+           style="background-color:#E76F51">
+
+        <div class="card-body">
+
+          <h5>
+            <i class="fa-solid fa-cart-shopping"></i>
+            Tổng đơn hàng
+          </h5>
+
+          <h2 th:text="${totalOrders}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white bg-danger">
+
+        <div class="card-body">
+
+          <h5>
+            <i class="fa-solid fa-file-invoice"></i>
+            Tổng hóa đơn
+          </h5>
+
+          <h2 th:text="${totalInvoices}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white bg-dark">
+
+        <div class="card-body">
+
+          <h5>
+            <i class="fa-solid fa-user-tie"></i>
+            Tổng nhân viên
+          </h5>
+
+          <h2 th:text="${totalUsers}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white"
+           style="background-color:#6F4E37">
+
+        <div class="card-body">
+
+          <h5>
+
+            <i class="fa-solid fa-warehouse"></i>
+
+            Tổng nguyên liệu
+
+          </h5>
+
+          <h2 th:text="${totalIngredients}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+  <div class="row">
+
+    <!-- Tổng doanh thu -->
+    <div class="col-md-4 mb-3">
+
+      <div class="card text-white"
+           style="background-color:#A0522D">
+
+        <div class="card-body">
+
+          <h5>
+
+            <i class="fa-solid fa-money-bill-wave"></i>
+
+            Tổng doanh thu
+
+          </h5>
+
+          <h2 th:text="${totalRevenue}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Đơn chờ -->
+    <div class="col-md-4 mb-3">
+
+      <div class="card bg-warning">
+
+        <div class="card-body">
+
+          <h5>
+
+            <i class="fa-solid fa-clock"></i>
+
+            Đơn chờ thanh toán
+
+          </h5>
+
+          <h2 th:text="${pendingOrders}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Đơn đã thanh toán -->
+    <div class="col-md-4 mb-3">
+
+      <div class="card bg-success text-white">
+
+        <div class="card-body">
+
+          <h5>
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            Đơn đã thanh toán
+
+          </h5>
+
+          <h2 th:text="${paidOrders}"></h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="row mt-4">
+
+    <!-- Biểu đồ doanh thu -->
+    <div class="col-md-8">
+
+      <div class="card">
+
+        <div class="card-header">
+          Doanh thu hệ thống
+        </div>
+
+        <div class="card-body"
+             style="height:600px;">
+
+          <canvas id="revenueChart"></canvas>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Top sản phẩm bán chạy -->
+    <div class="col-md-4">
+
+      <div class="card">
+
+        <div class="card-header"
+             style="background-color:#8B5E3C;color:white">
+
+          Top sản phẩm bán chạy
+
+        </div>
+
+        <div class="card-body">
+
+          <table class="table table-striped">
+
+            <thead>
+
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Đã bán</th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:each="p : ${topProducts}">
+
+              <td th:text="${p.productName}"></td>
+
+              <td th:text="${p.totalSold}"></td>
+
+            </tr>
+
+            </tbody>
+
+          </table>
+          <hr>
+
+          <canvas id="topProductChart"></canvas>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+
+    <div class="col-md-12">
+
+      <div class="card">
+
+        <div class="card-header text-white"
+             style="background-color:#8B5E3C">
+
+          Doanh thu theo tháng
+
+        </div>
+
+        <div class="card-body d-flex justify-content-center">
+
+          <div style="width:80%; height:450px;">
+            <canvas id="monthlyRevenueChart"></canvas>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="row mt-4">
+
+  <div class="col-md-12">
+
+    <div class="card">
+
+      <div class="card-header text-white"
+           style="background-color:#6F4E37">
+
+        Tồn kho nguyên liệu
+
+      </div>
+
+      <div class="card-body">
+
+        <table class="table table-bordered table-hover">
+
+          <thead>
+
+          <tr>
+
+            <th>ID</th>
+
+            <th>Nguyên liệu</th>
+
+            <th>Số lượng</th>
+
+            <th>Đơn vị</th>
+
+            <th>Trạng thái</th>
+
+          </tr>
+
+          </thead>
+
+          <tbody>
+
+          <tr th:each="i : ${ingredients}">
+
+            <td th:text="${i.ingredientId}"></td>
+
+            <td th:text="${i.ingredientName}"></td>
+
+            <td th:text="${i.quantity}"></td>
+
+            <td th:text="${i.unit}"></td>
+
+            <td>
+
+                            <span
+                                    th:if="${i.quantity <= 20}"
+                                    class="badge bg-danger">
+
+                                Sắp hết
+
+                            </span>
+
+              <span
+                      th:if="${i.quantity > 20}"
+                      class="badge bg-success">
+
+                                Đủ
+
+                            </span>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+        <hr>
+
+        <canvas id="ingredientChart"></canvas>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+
+  const revenueData = /*[[${revenueData}]]*/ [];
+  const revenueLabels = /*[[${revenueLabels}]]*/ [];
+  const topProductNames =
+          /*[[${topProductNames}]]*/ [];
+
+  const topProductSold =
+          /*[[${topProductSold}]]*/ [];
+  const ingredientNames =
+          /*[[${ingredientNames}]]*/ [];
+
+  const ingredientQuantities =
+          /*[[${ingredientQuantities}]]*/ [];
+
+  const revenueMonths =
+          /*[[${revenueMonths}]]*/ [];
+
+  const revenueByMonth =
+          /*[[${revenueByMonth}]]*/ [];
+
+  const ctx = document.getElementById('revenueChart');
+  new Chart(ctx, {
+
+    type: 'line',
+
+    data: {
+      labels: revenueLabels,
+      datasets: [{
+
+        label: 'Doanh thu',
+
+        data: revenueData,
+
+        tension: 0.4
+
+      }]
+    },
+
+    options: {
+
+      responsive: true,
+      maintainAspectRatio: false,
+
+      plugins: {
+
+        legend: {
+          display: true
+        }
+
+      }
+
+    }
+
+  })
+  const ctx2 =
+          document.getElementById('topProductChart');
+
+  new Chart(ctx2, {
+
+    type: 'bar',
+
+    data: {
+
+      labels: topProductNames,
+
+      datasets: [{
+
+        label: 'Đã bán',
+
+        data: topProductSold,
+
+        backgroundColor: [
+          '#F4A261',
+          '#E76F51',
+          '#8B5E3C',
+          '#D4A373',
+          '#B56576'
+        ]
+
+      }]
+
+    },
+
+    options: {
+
+      responsive: true,
+
+      plugins: {
+
+        legend: {
+
+          display: false
+
+        }
+
+      }
+
+    }
+
+  });
+  const ctx3 =
+          document.getElementById('ingredientChart');
+
+  new Chart(ctx3, {
+
+    type: 'bar',
+
+    data: {
+
+      labels: ingredientNames,
+
+      datasets: [{
+
+        label: 'Tồn kho',
+
+        data: ingredientQuantities,
+
+        backgroundColor: [
+          '#8B5E3C',
+          '#F4A261',
+          '#E76F51',
+          '#D4A373',
+          '#B56576'
+        ]
+
+      }]
+
+    },
+
+    options: {
+
+      responsive: true,
+
+      plugins: {
+
+        legend: {
+
+          display: true
+
+        }
+
+      }
+
+    }
+
+  });
+  const ctx4 =
+          document.getElementById('monthlyRevenueChart');
+
+  new Chart(ctx4, {
+
+    type: 'bar',
+
+    data: {
+
+      labels: revenueMonths.map(
+              m => "Tháng " + m
+      ),
+
+      datasets: [{
+
+        label: 'Doanh thu',
+
+        data: revenueByMonth
+
+      }]
+
+    },
+
+    options: {
+
+      responsive: true
+
+    }
+
+  });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tạo đơn hàng</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow">
+
+                <div class="card-header text-white"
+                     style="background-color:#8B5E3C">
+
+                    <h4 class="mb-0">
+
+                        <i class="fa-solid fa-receipt"></i>
+
+                        Thông tin đơn hàng
+
+                    </h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/orders/save}"
+                          th:object="${order}"
+                          method="post">
+
+                        <input type="hidden"
+                               th:field="*{orderId}">
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Khách hàng
+                            </label>
+
+                            <select th:field="*{customer}"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Chọn khách hàng --
+                                </option>
+
+                                <option th:each="c : ${customers}"
+                                        th:value="${c.customerId}"
+                                        th:text="${c.fullName}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Bàn
+                            </label>
+
+                            <select th:field="*{tableCafe}"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Chọn bàn --
+                                </option>
+
+                                <option th:each="t : ${tables}"
+                                        th:value="${t.tableId}"
+                                        th:text="${t.tableNumber}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Voucher
+                            </label>
+
+                            <select th:field="*{voucher}"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Không sử dụng --
+                                </option>
+
+                                <option th:each="v : ${vouchers}"
+                                        th:value="${v.voucherId}"
+                                        th:text="${v.voucherCode}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Nhân viên
+                            </label>
+
+                            <select th:field="*{user}"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    -- Chọn nhân viên --
+                                </option>
+
+                                <option th:each="u : ${users}"
+                                        th:value="${u.userId}"
+                                        th:text="${u.fullName}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Tổng tiền
+                            </label>
+
+                            <input type="number"
+                                   step="0.01"
+                                   th:field="*{totalAmount}"
+                                   class="form-control"
+                                   placeholder="Nhập tổng tiền">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Trạng thái
+                            </label>
+
+                            <input type="text"
+                                   th:field="*{status}"
+                                   class="form-control"
+                                   placeholder="Nhập trạng thái">
+
+                        </div>
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn text-white"
+                                    style="background-color:#8B5E3C;">
+
+                                <i class="fa-solid fa-floppy-disk"></i>
+
+                                Lưu
+
+                            </button>
+
+                            <a href="/orders"
+                               class="btn btn-secondary">
+
+                                <i class="fa-solid fa-arrow-left"></i>
+
+                                Quay lại
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
