@@ -299,8 +299,9 @@
                   <td class="fw-bold text-secondary" th:text="${i.quantity}">0</td>
                   <td th:text="${i.unit}">Đơn vị</td>
                   <td>
-                    <span th:if="${i.quantity <= 20}" class="badge bg-danger">Sắp hết</span>
-                    <span th:if="${i.quantity > 20}" class="badge bg-success">Đủ</span>
+                    <span th:if="${i.quantity <= 0}" class="badge bg-danger">HẾT HÀNG</span>
+                    <span th:if="${i.quantity > 0 and i.quantity <= 10}" class="badge bg-warning text-dark">SẮP HẾT</span>
+                    <span th:if="${i.quantity > 10}" class="badge bg-success">ĐỦ HÀNG</span>
                   </td>
                 </tr>
               </tbody>

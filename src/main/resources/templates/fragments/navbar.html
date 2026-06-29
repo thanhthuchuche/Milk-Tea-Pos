@@ -20,6 +20,23 @@
             fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css';
             document.head.appendChild(fa);
         }
+        
+        // Auto Wrap Tables and Style Search Forms on DOM Load
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll("table.table").forEach(table => {
+                if (!table.parentElement.classList.contains("table-responsive")) {
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "table-responsive";
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+            
+            // Add custom class to standard search forms for consistent card design
+            document.querySelectorAll("form[action*='/search']").forEach(form => {
+                form.classList.add("search-form-row");
+            });
+        });
     </script>
 
     <div class="container-fluid">
@@ -140,6 +157,18 @@
                        sec:authorize="hasAnyRole('ADMIN','STAFF')">
 
                         Đơn hàng
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="/admin/customer-orders"
+                       sec:authorize="hasAnyRole('ADMIN','STAFF')">
+
+                        Đơn Online
 
                     </a>
 

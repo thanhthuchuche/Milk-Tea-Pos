@@ -1,50 +1,66 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Danh sách công thức pha chế</title>
+    <title>Công thức pha chế - Cô Đào Quán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<h1>Danh sách công thức pha chế</h1>
+<div th:replace="fragments/navbar :: navbar"></div>
 
-<a href="/product-ingredients/add">
-    Thêm công thức
-</a>
+<div class="container py-4">
 
-<br><br>
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>
+            <i class="fa-solid fa-mortar-pestle"></i> Công thức pha chế (Định lượng món)
+        </h2>
+        <a href="/product-ingredients/add" class="btn btn-success">
+            <i class="fa-solid fa-plus"></i> Thêm công thức
+        </a>
+    </div>
 
-<table border="1">
+    <!-- Main List Card -->
+    <div class="card">
+        <div class="card-header">
+            Định lượng nguyên liệu tiêu thụ cho từng sản phẩm
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Sản phẩm</th>
+                            <th>Nguyên liệu sử dụng</th>
+                            <th class="text-end">Định lượng tiêu thụ</th>
+                            <th class="text-center pe-4" style="width: 15%;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pi : ${productIngredients}">
+                            <td class="ps-4" th:text="${pi.productIngredientId}">1</td>
+                            <td class="fw-semibold text-secondary" th:text="${pi.product.productName}">Trà sữa truyền thống</td>
+                            <td class="fw-bold text-dark" th:text="${pi.ingredient.ingredientName}">Sữa tươi</td>
+                            <td class="text-end" th:text="${pi.quantityUsed} + ' ' + ${pi.ingredient.unit}">0.1 Lít</td>
+                            <td class="text-center pe-4">
+                                <a th:href="@{/product-ingredients/delete/{id}(id=${pi.productIngredientId})}" 
+                                   class="btn btn-danger btn-sm" 
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa định lượng này không?')">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <tr>
-        <th>ID</th>
-        <th>Sản phẩm</th>
-        <th>Nguyên liệu</th>
-        <th>Số lượng sử dụng</th>
-        <th>Thao tác</th>
-    </tr>
+</div>
 
-    <tr th:each="pi : ${productIngredients}">
-
-        <td th:text="${pi.productIngredientId}"></td>
-
-        <td th:text="${pi.product.productName}"></td>
-
-        <td th:text="${pi.ingredient.ingredientName}"></td>
-
-        <td th:text="${pi.quantityUsed}"></td>
-
-        <td>
-
-            <a th:href="@{/product-ingredients/delete/{id}(id=${pi.productIngredientId})}"
-               onclick="return confirm('Bạn có chắc muốn xóa không?')">
-                Xóa
-            </a>
-
-        </td>
-
-    </tr>
-
-</table>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

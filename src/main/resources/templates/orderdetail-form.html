@@ -1,88 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Chi tiết đơn hàng</title>
+    <title>Chi tiết dòng đơn - Cô Đào Quán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<h2>Thêm / Sửa Chi tiết đơn hàng</h2>
+<div th:replace="fragments/navbar :: navbar"></div>
 
-<form th:action="@{/orderdetails/save}"
-      th:object="${orderDetail}"
-      method="post">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header">
+                    <h4 class="mb-0 text-dark">
+                        <i class="fa-solid fa-receipt"></i> Cấu hình chi tiết dòng đơn
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/orderdetails/save}" th:object="${orderDetail}" method="post">
+                        <input type="hidden" th:field="*{orderDetailId}">
 
-    <input type="hidden"
-           th:field="*{orderDetailId}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Đơn hàng</label>
+                                <select th:field="*{orders.orderId}" class="form-select" required>
+                                    <option value="">-- Chọn đơn hàng --</option>
+                                    <option th:each="o : ${orders}" 
+                                            th:value="${o.orderId}" 
+                                            th:text="'Đơn #' + ${o.orderId}">Đơn hàng</option>
+                                </select>
+                            </div>
 
-    <div>
-        <label>Đơn hàng:</label>
-        <select th:field="*{orders.orderId}" required>
-            <option value="">-- Chọn đơn hàng --</option>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Sản phẩm nước uống</label>
+                                <select th:field="*{product.productId}" class="form-select" required>
+                                    <option value="">-- Chọn sản phẩm --</option>
+                                    <option th:each="p : ${products}" 
+                                            th:value="${p.productId}" 
+                                            th:text="${p.productName}">Sản phẩm</option>
+                                </select>
+                            </div>
 
-            <option th:each="o : ${orders}"
-                    th:value="${o.orderId}"
-                    th:text="'Đơn #' + ${o.orderId}">
-            </option>
-        </select>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Số lượng</label>
+                                <input type="number" th:field="*{quantity}" class="form-control" min="1" placeholder="Nhập số lượng..." required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Đơn giá (VNĐ)</label>
+                                <input type="number" step="0.01" th:field="*{price}" class="form-control" min="0" placeholder="Nhập đơn giá..." required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Thành tiền (VNĐ)</label>
+                                <input type="number" step="0.01" th:field="*{subtotal}" class="form-control" min="0" placeholder="Nhập tổng dòng đơn..." required>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/orderdetails" class="btn btn-secondary">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-floppy-disk"></i> Lưu chi tiết
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <br>
-
-    <div>
-        <label>Sản phẩm:</label>
-        <select th:field="*{product.productId}" required>
-            <option value="">-- Chọn sản phẩm --</option>
-
-            <option th:each="p : ${products}"
-                    th:value="${p.productId}"
-                    th:text="${p.productName}">
-            </option>
-        </select>
-    </div>
-
-    <br>
-
-    <div>
-        <label>Số lượng:</label>
-        <input type="number"
-               th:field="*{quantity}"
-               min="1"
-               required>
-    </div>
-
-    <br>
-
-    <div>
-        <label>Đơn giá:</label>
-        <input type="number"
-               step="0.01"
-               th:field="*{price}"
-               min="0"
-               required>
-    </div>
-
-    <br>
-
-    <div>
-        <label>Thành tiền:</label>
-        <input type="number"
-               step="0.01"
-               th:field="*{subtotal}"
-               min="0"
-               required>
-    </div>
-
-    <br>
-
-    <button type="submit">
-        Lưu
-    </button>
-
-    <a th:href="@{/orderdetails}">
-        Hủy
-    </a>
-
-</form>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

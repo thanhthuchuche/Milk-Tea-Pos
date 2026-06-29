@@ -77,6 +77,7 @@ public class SecurityConfig {
                                 "/ingredients/**",
                                 "/customers/**",
                                 "/orders/**",
+                                "/admin/customer-orders/**",
                                 "/invoices/**",
                                 "/invoice/**",
                                 "/orderdetails/**",

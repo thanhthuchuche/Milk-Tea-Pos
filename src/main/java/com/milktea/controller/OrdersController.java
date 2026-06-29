@@ -66,11 +66,26 @@ public class OrdersController {
         order.setTableCafe(tableCafeService.getTableById(tableCafe));
 
         if (voucher != null) {
-            order.setVoucher(voucherService.getVoucherById(voucher));
+            com.milktea.entity.Voucher v = voucherService.getVoucherById(voucher);
+            order.setVoucher(v);
+            
+            java.time.LocalDate today = java.time.LocalDate.now();
+            boolean isActive = true;
+            if (v.getStartDate() != null && today.isBefore(v.getStartDate())) {
+                isActive = false;
+            }
+            if (v.getEndDate() != null && today.isAfter(v.getEndDate())) {
+                isActive = false;
+            }
+            
+            if (isActive && v.getDiscountPercent() != null) {
+                double discount = v.getDiscountPercent() / 100.0;
+                double originalAmount = order.getTotalAmount() != null ? order.getTotalAmount() : 0.0;
+                order.setTotalAmount(originalAmount * (1.0 - discount));
+            }
         } else {
             order.setVoucher(null);
         }
-
         if (user != null) {
             order.setUser(userService.getUserById(user));
         } else {
