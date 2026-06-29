@@ -21,7 +21,7 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
-
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(
@@ -64,9 +64,12 @@ public class SecurityConfig {
                         ).hasRole("CUSTOMER")
 
                         .requestMatchers(
-                                "/",
                                 "/users/**",
-                                "/roles/**",
+                                "/roles/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                "/",
                                 "/categories/**"
                         ).hasAnyRole("ADMIN", "STAFF")
 
@@ -96,7 +99,16 @@ public class SecurityConfig {
 
                         .passwordParameter("password")
 
-                        .defaultSuccessUrl("/", true)
+                        .successHandler((request, response, authentication) -> {
+                            var authorities = authentication.getAuthorities();
+                            boolean isCustomer = authorities.stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"));
+                            if (isCustomer) {
+                                response.sendRedirect("/customer/menu");
+                            } else {
+                                response.sendRedirect("/");
+                            }
+                        })
 
                         .failureUrl("/login?error")
 

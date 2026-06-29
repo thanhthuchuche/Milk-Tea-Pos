@@ -73,6 +73,11 @@ public class ProductController {
                 );
 
                 product.setImage(fileName);
+            } else if (product.getProductId() != null) {
+                Product existingProduct = productService.getProductById(product.getProductId());
+                if (existingProduct != null) {
+                    product.setImage(existingProduct.getImage());
+                }
             }
 
         } catch (Exception e) {

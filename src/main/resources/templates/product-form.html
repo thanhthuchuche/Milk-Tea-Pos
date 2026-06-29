@@ -78,13 +78,22 @@
 
                             <label class="form-label fw-bold">
 
-                                Hình ảnh sản phẩm
+                                Hình ảnh sản phẩm (Link URL hoặc Tải lên)
 
                             </label>
+
+                            <input type="text"
+                                   th:field="*{image}"
+                                   class="form-control mb-2"
+                                   placeholder="Nhập đường dẫn hình ảnh (URL)...">
 
                             <input type="file"
                                    name="imageFile"
                                    class="form-control">
+
+                            <div class="form-text">
+                                Nhập link ảnh trực tiếp từ internet hoặc tải tệp lên từ máy tính.
+                            </div>
 
                         </div>
 

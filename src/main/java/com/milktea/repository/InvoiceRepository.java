@@ -22,11 +22,11 @@ public interface InvoiceRepository
        """)
     List<Double> getRevenueData();
 
-    @Query("""
-       SELECT DATE_FORMAT(i.invoiceDate,'%d/%m')
-       FROM Invoice i
-       ORDER BY i.invoiceDate
-       """)
+    @Query(value = """
+       SELECT DATE_FORMAT(invoice_date,'%d/%m')
+       FROM invoice
+       ORDER BY invoice_date
+       """, nativeQuery = true)
     List<String> getRevenueLabels();
 
     @Query(value = """
