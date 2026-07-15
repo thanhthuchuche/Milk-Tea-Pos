@@ -98,8 +98,9 @@ public class AdminCustomerOrderController {
                     for (ProductIngredient recipe : recipes) {
                         Ingredient ingredient = recipe.getIngredient();
                         if (ingredient != null) {
-                            double neededQty = recipe.getQuantityUsed() * cd.getQuantity();
-                            double updatedQty = ingredient.getQuantity() - neededQty;
+                            int neededQty = (int) Math.round(recipe.getQuantityUsed() * cd.getQuantity());
+                            int currentQty = ingredient.getQuantity() != null ? ingredient.getQuantity() : 0;
+                            int updatedQty = currentQty - neededQty;
                             ingredient.setQuantity(updatedQty);
                             ingredientRepository.save(ingredient);
 

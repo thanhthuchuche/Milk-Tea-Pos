@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class TablePaymentController {
@@ -78,8 +79,9 @@ public class TablePaymentController {
                 for (ProductIngredient recipe : recipes) {
                     Ingredient ingredient = recipe.getIngredient();
                     if (ingredient != null) {
-                        double neededQty = recipe.getQuantityUsed() * detail.getQuantity();
-                        double updatedQty = ingredient.getQuantity() - neededQty;
+                        int neededQty = (int) Math.round(recipe.getQuantityUsed() * detail.getQuantity());
+                        int currentQty = ingredient.getQuantity() != null ? ingredient.getQuantity() : 0;
+                        int updatedQty = currentQty - neededQty;
                         ingredient.setQuantity(updatedQty);
                         ingredientRepository.save(ingredient);
 

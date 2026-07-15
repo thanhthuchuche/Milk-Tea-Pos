@@ -4,7 +4,15 @@ import com.milktea.entity.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public interface InvoiceRepository
         extends JpaRepository<Invoice,Integer> {
@@ -15,34 +23,53 @@ public interface InvoiceRepository
             """)
     Double getTotalRevenue();
 
-    @Query("""
-       SELECT i.totalAmount
-       FROM Invoice i
-       ORDER BY i.invoiceDate
-       """)
-    List<Double> getRevenueData();
+    default List<Double> getRevenueData() {
+        return findAllByOrderByInvoiceDateAsc().stream()
+                .map(Invoice::getTotalAmount)
+                .filter(Objects::nonNull)
+                .toList();
+    }
 
-    @Query(value = """
-       SELECT DATE_FORMAT(invoice_date,'%d/%m')
-       FROM invoice
-       ORDER BY invoice_date
-       """, nativeQuery = true)
-    List<String> getRevenueLabels();
+    default List<String> getRevenueLabels() {
+        return findAllByOrderByInvoiceDateAsc().stream()
+                .map(Invoice::getInvoiceDate)
+                .filter(Objects::nonNull)
+                .map(this::formatDate)
+                .toList();
+    }
 
-    @Query(value = """
-SELECT MONTH(invoice_date)
-FROM invoice
-GROUP BY MONTH(invoice_date)
-ORDER BY MONTH(invoice_date)
-""", nativeQuery = true)
-    List<Integer> getRevenueMonths();
+    default List<Integer> getRevenueMonths() {
+        Map<Integer, Double> monthlyTotals = new LinkedHashMap<>();
+        for (Invoice invoice : findAllByOrderByInvoiceDateAsc()) {
+            if (invoice.getInvoiceDate() == null) {
+                continue;
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(invoice.getInvoiceDate());
+            int month = calendar.get(Calendar.MONTH) + 1;
+            monthlyTotals.merge(month, invoice.getTotalAmount() == null ? 0.0 : invoice.getTotalAmount(), Double::sum);
+        }
+        return new ArrayList<>(monthlyTotals.keySet());
+    }
 
-    @Query(value = """
-SELECT SUM(total_amount)
-FROM invoice
-GROUP BY MONTH(invoice_date)
-ORDER BY MONTH(invoice_date)
-""", nativeQuery = true)
-    List<Double> getRevenueByMonth();
+    default List<Double> getRevenueByMonth() {
+        Map<Integer, Double> monthlyTotals = new LinkedHashMap<>();
+        for (Invoice invoice : findAllByOrderByInvoiceDateAsc()) {
+            if (invoice.getInvoiceDate() == null) {
+                continue;
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(invoice.getInvoiceDate());
+            int month = calendar.get(Calendar.MONTH) + 1;
+            monthlyTotals.merge(month, invoice.getTotalAmount() == null ? 0.0 : invoice.getTotalAmount(), Double::sum);
+        }
+        return new ArrayList<>(monthlyTotals.values());
+    }
 
+    List<Invoice> findAllByOrderByInvoiceDateAsc();
+
+    private String formatDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM");
+        return formatter.format(date);
+    }
 }

@@ -1,0 +1,109 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.milktea:milktea-pos >-----------------------
+[INFO] Building milktea-pos 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.1.0:run (default-cli) > test-compile @ milktea-pos >>>
+[INFO] 
+[INFO] --- kotlin:2.3.10:kapt (default-kapt) @ milktea-pos ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ milktea-pos ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 100 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- kotlin:2.3.10:compile (default-compile) @ milktea-pos ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ milktea-pos ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- kotlin:2.3.10:compile (compile) @ milktea-pos ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (compile) @ milktea-pos ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- kotlin:2.3.10:test-kapt (default-test-kapt) @ milktea-pos ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ milktea-pos ---
+[INFO] skip non existing resourceDirectory c:\Users\Win\IdeaProjects\milktea-pos\src\test\resources
+[INFO] 
+[INFO] --- kotlin:2.3.10:test-compile (default-test-compile) @ milktea-pos ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ milktea-pos ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- kotlin:2.3.10:test-compile (test-compile) @ milktea-pos ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (testCompile) @ milktea-pos ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:4.1.0:run (default-cli) < test-compile @ milktea-pos <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.1.0:run (default-cli) @ milktea-pos ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-07-15T09:17:41.354-07:00  INFO 27944 --- [milktea-pos] [           main] com.milktea.MilkteaPosApplication        : Starting MilkteaPosApplication using Java 17.0.19 with PID 27944 (C:\Users\Win\IdeaProjects\milktea-pos\target\classes started by Win in c:\Users\Win\IdeaProjects\milktea-pos)
+2026-07-15T09:17:41.359-07:00  INFO 27944 --- [milktea-pos] [           main] com.milktea.MilkteaPosApplication        : No active profile set, falling back to 1 default profile: "default"
+2026-07-15T09:17:41.691-07:00  WARN 27944 --- [milktea-pos] [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.milktea.MilkteaPosApplication]
+2026-07-15T09:17:41.724-07:00 ERROR 27944 --- [milktea-pos] [           main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.milktea.MilkteaPosApplication]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:290) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:206) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:174) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:452) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:316) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:795) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:603) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143) ~[spring-boot-web-server-4.1.0.jar:4.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756) ~[spring-boot-4.1.0.jar:4.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445) ~[spring-boot-4.1.0.jar:4.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321) ~[spring-boot-4.1.0.jar:4.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365) ~[spring-boot-4.1.0.jar:4.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354) ~[spring-boot-4.1.0.jar:4.1.0]
+	at com.milktea.MilkteaPosApplication.main(MilkteaPosApplication.java:10) ~[classes/:na]
+Caused by: java.io.FileNotFoundException: class path resource [com/milktea/config/DatabaseSeeder.class] cannot be opened because it does not exist
+	at org.springframework.core.io.ClassPathResource.getInputStream(ClassPathResource.java:212) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.core.type.classreading.SimpleMetadataReader.getClassReader(SimpleMetadataReader.java:54) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.core.type.classreading.SimpleMetadataReader.<init>(SimpleMetadataReader.java:48) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.core.type.classreading.SimpleMetadataReaderFactory.getMetadataReader(SimpleMetadataReaderFactory.java:62) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.core.type.classreading.CachingMetadataReaderFactory.getMetadataReader(CachingMetadataReaderFactory.java:127) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.core.type.classreading.AbstractMetadataReaderFactory.getMetadataReader(AbstractMetadataReaderFactory.java:62) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.core.type.classreading.CachingMetadataReaderFactory.getMetadataReader(CachingMetadataReaderFactory.java:40) ~[spring-core-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:218) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:357) ~[spring-context-7.0.8.jar:7.0.8]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:285) ~[spring-context-7.0.8.jar:7.0.8]
+	... 15 common frames omitted
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.556 s
+[INFO] Finished at: 2026-07-15T09:17:41-07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.1.0:run (default-cli) on project milktea-pos: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
