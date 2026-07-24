@@ -1,201 +1,401 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Tạo đơn hàng</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          rel="stylesheet">
+    <title>Bán Hàng Tại Quầy POS - Cô Đào Quán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .pos-product-card {
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background: #FFFFFF;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            overflow: hidden;
+        }
+        .pos-product-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+        .pos-product-img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+        }
+        .pos-ticket-card {
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            background: #FFFFFF;
+            position: sticky;
+            top: 80px;
+        }
+        .ticket-item-row {
+            border-bottom: 1px dashed var(--border-color);
+            padding: 0.6rem 0;
+        }
+        .qty-mini-btn {
+            width: 26px;
+            height: 26px;
+            padding: 0;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+    </style>
 </head>
-
 <body>
 
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container mt-5">
+<div class="container-fluid px-4 py-3">
 
-    <div class="row justify-content-center">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0 fw-bold">
+            <i class="fa-solid fa-cash-register text-primary me-2"></i> Màn Hình Bán Hàng Tại Quầy (POS Thu Ngân)
+        </h3>
+        <div class="d-flex gap-2">
+            <a href="/orders" class="btn btn-secondary btn-sm">
+                <i class="fa-solid fa-list"></i> Danh sách đơn hàng
+            </a>
+            <a href="/invoices" class="btn btn-outline-primary btn-sm">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Hóa đơn thanh toán
+            </a>
+        </div>
+    </div>
 
-        <div class="col-md-8">
+    <!-- Error Alert -->
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i> <span th:text="${errorMessage}">Lỗi!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-            <div class="card shadow">
+    <div class="row g-3">
+        
+        <!-- LEFT COLUMN: Product Menu Catalog (65% width) -->
+        <div class="col-lg-7 col-xl-8">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body p-3">
+                    <!-- Search & Filter Controls -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                                <input type="text" id="productSearchInput" class="form-control border-start-0" placeholder="Tìm tên món uống, trà sữa, bánh ngọt...">
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-primary active category-filter-btn" data-category="ALL">Tất cả</button>
+                                <button th:each="cat : ${categories}" 
+                                        type="button" 
+                                        class="btn btn-outline-primary category-filter-btn" 
+                                        th:data-category="${cat.categoryId}" 
+                                        th:text="${cat.categoryName}">Danh mục</button>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="card-header text-white"
-                     style="background-color:#8B5E3C">
-
-                    <h4 class="mb-0">
-
-                        <i class="fa-solid fa-receipt"></i>
-
-                        Thông tin đơn hàng
-
-                    </h4>
-
+                    <!-- Products Grid -->
+                    <div class="row g-2 row-cols-2 row-cols-md-3 row-cols-xl-4" id="posProductsGrid">
+                        <div th:each="p : ${products}" 
+                             class="col pos-product-item" 
+                             th:data-category="${p.category != null ? p.category.categoryId : 0}"
+                             th:data-name="${p.productName.toLowerCase()}">
+                            <div class="pos-product-card p-2 text-center h-100 d-flex flex-column justify-content-between"
+                                 th:data-id="${p.productId}"
+                                 th:data-name="${p.productName}"
+                                 th:data-price="${p.price != null ? p.price : 0}">
+                                <div>
+                                    <img th:src="${p.image != null and #strings.startsWith(p.image, 'http') ? p.image : '/images/' + p.image}" 
+                                         class="pos-product-img rounded mb-2" 
+                                         alt="Ảnh sản phẩm">
+                                    <div class="fw-bold text-dark small text-truncate" th:text="${p.productName}">Món uống</div>
+                                </div>
+                                <div class="mt-2 pt-1 border-top">
+                                    <div class="fw-bold text-danger small" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">39,000 đ</div>
+                                    <button type="button" class="btn btn-primary btn-sm w-100 mt-1 py-0 px-2 small add-to-ticket-btn">
+                                        <i class="fa-solid fa-plus me-1"></i> Thêm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
 
+        <!-- RIGHT COLUMN: Order Ticket & Checkout (35% width) -->
+        <div class="col-lg-5 col-xl-4">
+            <div class="card pos-ticket-card shadow-sm">
+                <div class="card-header text-white d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-receipt me-1"></i> Phiếu Đặt Món POS</span>
+                    <span class="badge bg-light text-dark" id="itemCountBadge">0 món</span>
+                </div>
                 <div class="card-body">
+                    <form th:action="@{/orders/pos-checkout}" method="post" id="posCheckoutForm">
+                        
+                        <!-- Customer & Table Selection -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Khách hàng</label>
+                                <select name="customerId" class="form-select form-select-sm">
+                                    <option value="">-- Khách lẻ --</option>
+                                    <option th:each="c : ${customers}" th:value="${c.customerId}" th:text="${c.fullName}">Khách A</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Vị trí bàn</label>
+                                <select name="tableId" class="form-select form-select-sm">
+                                    <option value="">-- Mang đi / Mang về --</option>
+                                    <option th:each="t : ${tables}" th:value="${t.tableId}" th:text="${t.tableNumber}">Bàn 01</option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <form th:action="@{/orders/save}"
-                          th:object="${order}"
-                          method="post">
+                        <!-- Ticket Items List -->
+                        <div class="border rounded bg-light p-2 mb-3" style="min-height: 180px; max-height: 260px; overflow-y: auto;" id="ticketItemsContainer">
+                            <div class="text-center text-muted py-4 small opacity-75" id="emptyTicketPlaceholder">
+                                <i class="fa-solid fa-cart-flatbed fa-2x mb-2"></i><br>
+                                Chưa có món nào được chọn.<br>Click vào sản phẩm bên trái để thêm vào đơn.
+                            </div>
+                            <!-- Dynamic items populated by JS -->
+                        </div>
 
-                        <input type="hidden"
-                               th:field="*{orderId}">
+                        <!-- Voucher & Staff Selection -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Mã giảm giá (Voucher)</label>
+                                <select name="voucherId" id="voucherSelect" class="form-select form-select-sm">
+                                    <option value="" data-discount="0">-- Không dùng --</option>
+                                    <option th:each="v : ${vouchers}" 
+                                            th:value="${v.voucherId}" 
+                                            th:data-discount="${v.discountPercent}"
+                                            th:text="${v.voucherCode + ' (-' + v.discountPercent + '%)'}">CODAO20</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Thu ngân phục vụ</label>
+                                <select name="userId" class="form-select form-select-sm" required>
+                                    <option th:each="u : ${users}" 
+                                            th:value="${u.userId}" 
+                                            th:text="${u.fullName}"
+                                            th:selected="${#authentication != null and #authentication.name == u.username}">Nhân viên</option>
+                                </select>
+                            </div>
+                        </div>
 
+                        <!-- Payment Method Toggle -->
                         <div class="mb-3">
+                            <label class="form-label small fw-bold mb-1">Hình thức thanh toán</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="paymentMethod" id="payCash" value="CASH" checked>
+                                <label class="btn btn-outline-success btn-sm" for="payCash">
+                                    <i class="fa-solid fa-money-bill-wave me-1"></i> Tiền mặt
+                                </label>
 
-                            <label class="form-label fw-bold">
-                                Khách hàng
-                            </label>
-
-                            <select th:field="*{customer}"
-                                    class="form-select">
-
-                                <option value="">
-                                    -- Chọn khách hàng --
-                                </option>
-
-                                <option th:each="c : ${customers}"
-                                        th:value="${c.customerId}"
-                                        th:text="${c.fullName}">
-                                </option>
-
-                            </select>
-
+                                <input type="radio" class="btn-check" name="paymentMethod" id="payVietQr" value="BANK_TRANSFER">
+                                <label class="btn btn-outline-primary btn-sm" for="payVietQr">
+                                    <i class="fa-solid fa-qrcode me-1"></i> Chuyển khoản VietQR
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-
-                            <label class="form-label fw-bold">
-                                Bàn
-                            </label>
-
-                            <select th:field="*{tableCafe}"
-                                    class="form-select">
-
-                                <option value="">
-                                    -- Chọn bàn --
-                                </option>
-
-                                <option th:each="t : ${tables}"
-                                        th:value="${t.tableId}"
-                                        th:text="${t.tableNumber}">
-                                </option>
-
-                            </select>
-
+                        <!-- Summary Breakdown -->
+                        <div class="border-top pt-2 mb-3">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Tạm tính:</span>
+                                <span id="rawTotalText">0 đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-success mb-1" id="discountRow" style="display: none !important;">
+                                <span>Giảm giá Voucher:</span>
+                                <span id="discountText">-0 đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center fs-5 fw-bold text-dark pt-1 border-top">
+                                <span>TỔNG CỘNG:</span>
+                                <span class="text-danger fs-4" id="finalTotalText">0 đ</span>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-
-                            <label class="form-label fw-bold">
-                                Voucher
-                            </label>
-
-                            <select th:field="*{voucher}"
-                                    class="form-select">
-
-                                <option value="">
-                                    -- Không sử dụng --
-                                </option>
-
-                                <option th:each="v : ${vouchers}"
-                                        th:value="${v.voucherId}"
-                                        th:text="${v.voucherCode}">
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-bold">
-                                Nhân viên
-                            </label>
-
-                            <select th:field="*{user}"
-                                    class="form-select"
-                                    required>
-
-                                <option value="">
-                                    -- Chọn nhân viên --
-                                </option>
-
-                                <option th:each="u : ${users}"
-                                        th:value="${u.userId}"
-                                        th:text="${u.fullName}">
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-bold">
-                                Tổng tiền
-                            </label>
-
-                            <input type="number"
-                                   step="0.01"
-                                   th:field="*{totalAmount}"
-                                   class="form-control"
-                                   placeholder="Nhập tổng tiền">
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-bold">
-                                Trạng thái
-                            </label>
-
-                            <input type="text"
-                                   th:field="*{status}"
-                                   class="form-control"
-                                   placeholder="Nhập trạng thái">
-
-                        </div>
-
-                        <div class="d-flex gap-2">
-
-                            <button type="submit"
-                                    class="btn text-white"
-                                    style="background-color:#8B5E3C;">
-
-                                <i class="fa-solid fa-floppy-disk"></i>
-
-                                Lưu
-
-                            </button>
-
-                            <a href="/orders"
-                               class="btn btn-secondary">
-
-                                <i class="fa-solid fa-arrow-left"></i>
-
-                                Quay lại
-
-                            </a>
-
-                        </div>
+                        <!-- 1-Click Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 fs-6 fw-bold shadow-sm" id="submitOrderBtn">
+                            <i class="fa-solid fa-print me-1"></i> Thanh Toán & In Hóa Đơn POS
+                        </button>
 
                     </form>
-
                 </div>
-
             </div>
-
         </div>
 
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ticketItems = {};
 
+        function formatVnd(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+        }
+
+        // Add Product to Ticket
+        document.querySelectorAll(".add-to-ticket-btn, .pos-product-card").forEach(elem => {
+            elem.addEventListener("click", function(e) {
+                const card = this.closest(".pos-product-card");
+                const id = card.dataset.id;
+                const name = card.dataset.name;
+                const price = parseFloat(card.dataset.price) || 0;
+
+                if (ticketItems[id]) {
+                    ticketItems[id].qty += 1;
+                } else {
+                    ticketItems[id] = { id: id, name: name, price: price, qty: 1, note: '' };
+                }
+                renderTicket();
+            });
+        });
+
+        function renderTicket() {
+            const container = document.getElementById("ticketItemsContainer");
+            const placeholder = document.getElementById("emptyTicketPlaceholder");
+            const keys = Object.keys(ticketItems);
+
+            if (keys.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4 small opacity-75">
+                        <i class="fa-solid fa-cart-flatbed fa-2x mb-2"></i><br>
+                        Chưa có món nào được chọn.<br>Click vào sản phẩm bên trái để thêm vào đơn.
+                    </div>`;
+                updateTotals(0);
+                document.getElementById("itemCountBadge").innerText = "0 món";
+                return;
+            }
+
+            let html = '';
+            let rawTotal = 0;
+            let totalCount = 0;
+
+            keys.forEach(id => {
+                const item = ticketItems[id];
+                const subtotal = item.price * item.qty;
+                rawTotal += subtotal;
+                totalCount += item.qty;
+
+                html += `
+                    <div class="ticket-item-row d-flex justify-content-between align-items-center">
+                        <input type="hidden" name="productIds" value="${item.id}">
+                        <input type="hidden" name="quantities" value="${item.qty}">
+                        <input type="hidden" name="notes" value="${item.note}">
+                        
+                        <div style="max-width: 140px;">
+                            <div class="fw-bold text-dark small text-truncate">${item.name}</div>
+                            <div class="text-muted text-nowrap" style="font-size: 0.75rem;">${formatVnd(item.price)}</div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-outline-secondary qty-mini-btn decrease-qty" data-id="${item.id}">-</button>
+                            <span class="fw-bold px-1 small">${item.qty}</span>
+                            <button type="button" class="btn btn-outline-secondary qty-mini-btn increase-qty" data-id="${item.id}">+</button>
+                        </div>
+
+                        <div class="text-end">
+                            <div class="fw-bold text-danger small">${formatVnd(subtotal)}</div>
+                            <button type="button" class="btn btn-link text-danger p-0 border-0 remove-item" data-id="${item.id}" style="font-size: 0.75rem;">Xóa</button>
+                        </div>
+                    </div>`;
+            });
+
+            container.innerHTML = html;
+            document.getElementById("itemCountBadge").innerText = totalCount + " món";
+
+            // Attach dynamic event handlers for item qty changes
+            container.querySelectorAll(".increase-qty").forEach(b => {
+                b.onclick = function() {
+                    const id = this.dataset.id;
+                    ticketItems[id].qty += 1;
+                    renderTicket();
+                };
+            });
+            container.querySelectorAll(".decrease-qty").forEach(b => {
+                b.onclick = function() {
+                    const id = this.dataset.id;
+                    if (ticketItems[id].qty > 1) {
+                        ticketItems[id].qty -= 1;
+                    } else {
+                        delete ticketItems[id];
+                    }
+                    renderTicket();
+                };
+            });
+            container.querySelectorAll(".remove-item").forEach(b => {
+                b.onclick = function() {
+                    delete ticketItems[this.dataset.id];
+                    renderTicket();
+                };
+            });
+
+            updateTotals(rawTotal);
+        }
+
+        function updateTotals(rawTotal) {
+            document.getElementById("rawTotalText").innerText = formatVnd(rawTotal);
+
+            const voucherSelect = document.getElementById("voucherSelect");
+            const selectedOpt = voucherSelect.options[voucherSelect.selectedIndex];
+            const discountPct = parseFloat(selectedOpt.dataset.discount) || 0;
+
+            let discountAmount = 0;
+            if (discountPct > 0) {
+                discountAmount = rawTotal * (discountPct / 100.0);
+                document.getElementById("discountRow").style.display = "flex";
+                document.getElementById("discountText").innerText = "-" + formatVnd(discountAmount);
+            } else {
+                document.getElementById("discountRow").style.display = "none";
+            }
+
+            const finalTotal = Math.max(0, rawTotal - discountAmount);
+            document.getElementById("finalTotalText").innerText = formatVnd(finalTotal);
+        }
+
+        document.getElementById("voucherSelect").addEventListener("change", function() {
+            renderTicket();
+        });
+
+        // Search Filter
+        document.getElementById("productSearchInput").addEventListener("input", function() {
+            const query = this.value.toLowerCase().trim();
+            document.querySelectorAll(".pos-product-item").forEach(item => {
+                const name = item.dataset.name;
+                if (name.includes(query)) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+
+        // Category Filter Tabs
+        document.querySelectorAll(".category-filter-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.querySelectorAll(".category-filter-btn").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+
+                const catId = this.dataset.category;
+                document.querySelectorAll(".pos-product-item").forEach(item => {
+                    if (catId === "ALL" || item.dataset.category === catId) {
+                        item.style.display = "block";
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+</script>
 </body>
 </html>
