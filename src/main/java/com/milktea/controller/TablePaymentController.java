@@ -91,11 +91,21 @@ public class TablePaymentController {
                         transaction.setIngredient(ingredient);
                         transaction.setQuantity(neededQty);
                         transaction.setTransactionType("EXPORT");
-                        transaction.setSupplier("Bán hàng tại quầy - Đơn #" + orderId);
+                        transaction.setSupplier("Bán hàng tại bàn - Đơn #" + orderId);
                         transaction.setNote("Tự động xuất kho dựa trên công thức pha chế món: " + detail.getProduct().getProductName());
                         inventoryTransactionRepository.save(transaction);
                     }
                 }
+            }
+        }
+
+        // 6. Award Customer Loyalty Points (1 point per 10,000 VNĐ)
+        if (order.getCustomer() != null && order.getTotalAmount() != null) {
+            Customer customer = order.getCustomer();
+            int earnedPoints = (int) (order.getTotalAmount() / 10000);
+            if (earnedPoints > 0) {
+                int currentPoints = customer.getPoint() != null ? customer.getPoint() : 0;
+                customer.setPoint(currentPoints + earnedPoints);
             }
         }
 

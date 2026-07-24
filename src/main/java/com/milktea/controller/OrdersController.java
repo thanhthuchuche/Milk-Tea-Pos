@@ -1,15 +1,7 @@
 package com.milktea.controller;
 
-import com.milktea.entity.Orders;
-import com.milktea.entity.Product;
-import com.milktea.entity.OrderDetail;
-import com.milktea.entity.Invoice;
-import com.milktea.entity.Payment;
-import com.milktea.entity.Voucher;
-import com.milktea.entity.Customer;
-import com.milktea.entity.TableCafe;
-import com.milktea.entity.User;
-import com.milktea.entity.Category;
+import com.milktea.entity.*;
+import com.milktea.repository.*;
 import com.milktea.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +25,11 @@ public class OrdersController {
     private final InvoiceService invoiceService;
     private final PaymentService paymentService;
     private final BankSettingService bankSettingService;
+    private final ProductIngredientRepository productIngredientRepository;
+    private final IngredientRepository ingredientRepository;
+    private final InventoryTransactionRepository inventoryTransactionRepository;
+    private final CustomerRepository customerRepository;
+    private final TableCafeRepository tableCafeRepository;
 
     public OrdersController(
             OrdersService ordersService,
@@ -45,7 +42,12 @@ public class OrdersController {
             CategoryService categoryService,
             InvoiceService invoiceService,
             PaymentService paymentService,
-            BankSettingService bankSettingService) {
+            BankSettingService bankSettingService,
+            ProductIngredientRepository productIngredientRepository,
+            IngredientRepository ingredientRepository,
+            InventoryTransactionRepository inventoryTransactionRepository,
+            CustomerRepository customerRepository,
+            TableCafeRepository tableCafeRepository) {
 
         this.ordersService = ordersService;
         this.customerService = customerService;
@@ -58,6 +60,11 @@ public class OrdersController {
         this.invoiceService = invoiceService;
         this.paymentService = paymentService;
         this.bankSettingService = bankSettingService;
+        this.productIngredientRepository = productIngredientRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.inventoryTransactionRepository = inventoryTransactionRepository;
+        this.customerRepository = customerRepository;
+        this.tableCafeRepository = tableCafeRepository;
     }
 
     @GetMapping("/orders")
@@ -102,11 +109,18 @@ public class OrdersController {
         order.setOrderDate(new Date());
         order.setStatus("COMPLETED");
 
+        Customer customer = null;
         if (customerId != null) {
-            order.setCustomer(customerService.getCustomerById(customerId));
+            customer = customerService.getCustomerById(customerId);
+            order.setCustomer(customer);
         }
+        TableCafe table = null;
         if (tableId != null) {
-            order.setTableCafe(tableCafeService.getTableById(tableId));
+            table = tableCafeService.getTableById(tableId);
+            order.setTableCafe(table);
+            // Free up table or mark as occupied
+            table.setStatus("OCCUPIED");
+            tableCafeRepository.save(table);
         }
         if (userId != null) {
             order.setUser(userService.getUserById(userId));
@@ -114,7 +128,7 @@ public class OrdersController {
 
         ordersService.saveOrder(order);
 
-        // 2. Add Items & Calculate Subtotal
+        // 2. Add Items, Calculate Subtotal & Subtract Recipe Inventory Stock
         double totalAmount = 0.0;
         for (int i = 0; i < productIds.size(); i++) {
             Integer pId = productIds.get(i);
@@ -136,6 +150,29 @@ public class OrdersController {
                 detail.setNote(note);
 
                 orderDetailService.saveOrderDetail(detail);
+
+                // Automatic Recipe-based Ingredient Stock Subtraction
+                List<ProductIngredient> recipes = productIngredientRepository.findByProductProductId(pId);
+                for (ProductIngredient recipe : recipes) {
+                    Ingredient ingredient = recipe.getIngredient();
+                    if (ingredient != null) {
+                        int neededQty = (int) Math.round(recipe.getQuantityUsed() * qty);
+                        int currentQty = ingredient.getQuantity() != null ? ingredient.getQuantity() : 0;
+                        int updatedQty = Math.max(0, currentQty - neededQty);
+                        ingredient.setQuantity(updatedQty);
+                        ingredientRepository.save(ingredient);
+
+                        // Record EXPORT inventory transaction log
+                        InventoryTransaction transaction = new InventoryTransaction();
+                        transaction.setTransactionDate(new Date());
+                        transaction.setIngredient(ingredient);
+                        transaction.setQuantity(neededQty);
+                        transaction.setTransactionType("EXPORT");
+                        transaction.setSupplier("Bán hàng tại quầy POS - Đơn #" + order.getOrderId());
+                        transaction.setNote("Tự động xuất kho theo định lượng món: " + product.getProductName());
+                        inventoryTransactionRepository.save(transaction);
+                    }
+                }
             }
         }
 
@@ -154,19 +191,29 @@ public class OrdersController {
         order.setTotalAmount(totalAmount);
         ordersService.saveOrder(order);
 
-        // 4. Create Invoice Entity
+        // 4. Award Customer Loyalty Points (1 point for every 10,000 VNĐ)
+        if (customer != null) {
+            int earnedPoints = (int) (totalAmount / 10000);
+            if (earnedPoints > 0) {
+                int currentPoints = customer.getPoint() != null ? customer.getPoint() : 0;
+                customer.setPoint(currentPoints + earnedPoints);
+                customerRepository.save(customer);
+            }
+        }
+
+        // 5. Create Invoice Entity
         Invoice invoice = new Invoice();
         invoice.setOrders(order);
         invoice.setInvoiceDate(new Date());
         invoice.setTotalAmount(totalAmount);
         invoiceService.saveInvoice(invoice);
 
-        // 5. Create Payment Entity
+        // 6. Create Payment Entity
         Payment payment = new Payment();
         payment.setInvoice(invoice);
         payment.setPaymentDate(new Date());
         payment.setPaymentMethod(paymentMethod);
-        payment.setPaymentStatus("PAID");
+        payment.setPaymentStatus("COMPLETED");
         paymentService.savePayment(payment);
 
         // Redirect directly to Thermal Invoice Print view!

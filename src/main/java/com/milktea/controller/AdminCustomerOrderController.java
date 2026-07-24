@@ -132,6 +132,17 @@ public class AdminCustomerOrderController {
             payment.setPaymentDate(new Date());
             payment.setInvoice(invoice);
             paymentRepository.save(payment);
+
+            // 6. Award Customer Loyalty Points (1 point per 10,000 VNĐ)
+            if (customerOrder.getCustomer() != null && customerOrder.getTotalAmount() != null) {
+                Customer customer = customerOrder.getCustomer();
+                int earnedPoints = (int) (customerOrder.getTotalAmount() / 10000);
+                if (earnedPoints > 0) {
+                    int currentPoints = customer.getPoint() != null ? customer.getPoint() : 0;
+                    customer.setPoint(currentPoints + earnedPoints);
+                    // customerRepository save is done via Cascade or explicit save
+                }
+            }
         }
         return "redirect:/admin/customer-orders";
     }
