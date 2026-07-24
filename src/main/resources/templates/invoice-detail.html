@@ -126,7 +126,7 @@
         <hr class="my-3" style="border-top: 1.5px dashed #ccc;">
 
         <!-- Order Items Breakdown -->
-        <table class="receipt-table" th:if="${invoice.orders != null and invoice.orders.orderDetails != null and not #lists.isEmpty(invoice.orders.orderDetails)}">
+        <table class="receipt-table" th:if="${orderDetails != null and not #lists.isEmpty(orderDetails)}">
             <thead>
                 <tr>
                     <th text-align="left">Món uống</th>
@@ -136,7 +136,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="detail : ${invoice.orders.orderDetails}">
+                <tr th:each="detail : ${orderDetails}">
                     <td th:text="${detail.product != null ? detail.product.productName : 'Món uống'}">Trà sữa</td>
                     <td text-align="center" class="text-center" th:text="${detail.quantity}">1</td>
                     <td text-align="right" class="text-end" th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')}">30,000</td>
@@ -156,11 +156,11 @@
         <!-- VietQR Code Dynamic Payment Section -->
         <div class="qr-payment-receipt">
             <div class="fw-bold text-dark small mb-1">QUÉT MÃ VIETQR CHUYỂN KHOẢN</div>
-            <img th:src="${'https://img.vietqr.io/image/MB-0912345678-compact2.png?amount=' + #numbers.formatDecimal(invoice.totalAmount, 0, 0) + '&addInfo=THANH%20TOAN%20HOA%20DON%20HD' + invoice.invoiceId + '&accountName=CO%20DAO%20QUAN'}" 
+            <img th:src="${'https://img.vietqr.io/image/' + (bankSetting != null ? bankSetting.bankId : 'MB') + '-' + (bankSetting != null ? bankSetting.accountNo : '0912345678') + '-compact2.png?amount=' + #numbers.formatDecimal(invoice.totalAmount, 0, 0) + '&addInfo=THANH%20TOAN%20HOA%20DON%20HD' + invoice.invoiceId + '&accountName=' + (bankSetting != null ? bankSetting.accountName : 'CO%20DAO%20QUAN')}" 
                  style="max-width: 180px; border-radius: 8px;" 
                  alt="Mã VietQR Thanh Toán">
-            <div class="small text-muted mt-1">Ngân hàng MBBank - STK: <strong>0912345678</strong></div>
-            <div class="small text-muted">Chủ TK: <strong>CO DAO QUAN</strong></div>
+            <div class="small text-muted mt-1">Ngân hàng <span th:text="${bankSetting != null ? bankSetting.bankName : 'MBBank'}">MBBank</span> - STK: <strong th:text="${bankSetting != null ? bankSetting.accountNo : '0912345678'}">0912345678</strong></div>
+            <div class="small text-muted">Chủ TK: <strong th:text="${bankSetting != null ? bankSetting.accountName : 'CO DAO QUAN'}">CO DAO QUAN</strong></div>
         </div>
 
         <div class="text-center mt-4 pt-2 text-muted small">
