@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/webjars/**",
                                 "/login",
+                                "/contact/**",
                                 "/h2-console/**",
                                 "/menu/**",
                                 "/order-at-table/**",
@@ -54,7 +55,8 @@ public class SecurityConfig {
                         ).hasAnyRole("ADMIN", "STAFF")
 
                         .requestMatchers(
-                                "/vouchers/**"
+                                "/vouchers/**",
+                                "/admin/bank-settings/**"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(

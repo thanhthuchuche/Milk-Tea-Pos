@@ -127,6 +127,16 @@
                         <i class="fa-solid fa-ticket me-1 opacity-75"></i> Voucher
                     </a>
                 </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" href="/admin/bank-settings">
+                        <i class="fa-solid fa-building-columns me-1 opacity-75"></i> Ngân hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">
+                        <i class="fa-solid fa-address-book me-1 opacity-75"></i> Liên hệ
+                    </a>
+                </li>
             </ul>
 
             <!-- User Status + Logout -->

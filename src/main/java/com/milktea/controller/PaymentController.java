@@ -12,22 +12,23 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final InvoiceService invoiceService;
+    private final com.milktea.service.BankSettingService bankSettingService;
 
     public PaymentController(
             PaymentService paymentService,
-            InvoiceService invoiceService) {
+            InvoiceService invoiceService,
+            com.milktea.service.BankSettingService bankSettingService) {
 
         this.paymentService = paymentService;
         this.invoiceService = invoiceService;
+        this.bankSettingService = bankSettingService;
     }
 
     @GetMapping("/payments")
     public String getAllPayments(Model model) {
 
-        model.addAttribute(
-                "payments",
-                paymentService.getAllPayments()
-        );
+        model.addAttribute("payments", paymentService.getAllPayments());
+        model.addAttribute("bankSetting", bankSettingService.getBankSetting());
 
         return "payment-list";
     }

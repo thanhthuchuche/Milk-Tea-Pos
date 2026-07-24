@@ -64,13 +64,18 @@
 <div class="container py-4">
 
   <!-- Welcome Banner -->
-  <div class="welcome-banner text-white p-4 mb-4 d-flex justify-content-between align-items-center">
+  <div class="welcome-banner text-white p-4 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
       <h3 class="mb-1 text-white">Xin chào, <span sec:authentication="name" style="color: var(--secondary-color);" class="fw-bold">Người dùng</span>! 👋</h3>
       <p class="mb-0 opacity-75 small">Hệ thống đang vận hành ổn định. Chúc bạn một ngày kinh doanh thuận lợi tại Cô Đào Quán POS.</p>
     </div>
-    <div class="d-none d-md-block pe-3">
-      <i class="fa-solid fa-mug-hot fa-3x" style="color: var(--secondary-color); opacity: 0.85;"></i>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/reports/export-invoices-csv" class="btn btn-warning text-dark fw-bold shadow-sm">
+        <i class="fa-solid fa-file-excel me-1"></i> Xuất Báo Cáo Doanh Thu (Excel)
+      </a>
+      <div class="d-none d-lg-block ps-2">
+        <i class="fa-solid fa-mug-hot fa-2x" style="color: var(--secondary-color); opacity: 0.85;"></i>
+      </div>
     </div>
   </div>
 

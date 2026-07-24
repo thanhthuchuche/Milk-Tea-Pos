@@ -15,7 +15,7 @@
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             padding: 2rem;
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color);
         }
 
         .receipt-header {
@@ -64,6 +64,15 @@
             margin-top: 1rem;
         }
 
+        .qr-payment-receipt {
+            border: 1.5px dashed var(--primary-color);
+            background: #FDFBF7;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1.25rem;
+        }
+
         /* Thermal Printing Print Rules */
         @media print {
             body {
@@ -90,9 +99,9 @@
         <!-- Header -->
         <div class="receipt-header">
             <div class="receipt-brand">☕ CÔ ĐÀO QUÁN</div>
-            <div class="small text-muted">Hệ Thống Bán Hàng & Đặt Món Trà Sữa</div>
-            <div class="small text-muted">Địa chỉ: 123 Đường Trà Sữa, Q.1, TP.HCM</div>
-            <div class="small text-muted">Hotline: 0912.345.678</div>
+            <div class="small text-muted fw-bold">Hệ Thống Phục Vụ & Đặt Món POS</div>
+            <div class="small text-muted"><i class="fa-solid fa-location-dot me-1"></i> 369/25 Lý Thái Tổ, Phường 9, Quận 10, TP.HCM</div>
+            <div class="small text-muted"><i class="fa-solid fa-phone me-1"></i> Hotline: 0912.345.678 - 0987.654.321</div>
             <h5 class="fw-bold mt-3 mb-0 text-dark">HÓA ĐƠN THANH TOÁN</h5>
         </div>
 
@@ -144,6 +153,16 @@
             </div>
         </div>
 
+        <!-- VietQR Code Dynamic Payment Section -->
+        <div class="qr-payment-receipt">
+            <div class="fw-bold text-dark small mb-1">QUÉT MÃ VIETQR CHUYỂN KHOẢN</div>
+            <img th:src="${'https://img.vietqr.io/image/MB-0912345678-compact2.png?amount=' + #numbers.formatDecimal(invoice.totalAmount, 0, 0) + '&addInfo=THANH%20TOAN%20HOA%20DON%20HD' + invoice.invoiceId + '&accountName=CO%20DAO%20QUAN'}" 
+                 style="max-width: 180px; border-radius: 8px;" 
+                 alt="Mã VietQR Thanh Toán">
+            <div class="small text-muted mt-1">Ngân hàng MBBank - STK: <strong>0912345678</strong></div>
+            <div class="small text-muted">Chủ TK: <strong>CO DAO QUAN</strong></div>
+        </div>
+
         <div class="text-center mt-4 pt-2 text-muted small">
             <em>Cảm ơn Quý khách & Hẹn gặp lại!</em><br>
             <span>Powered by Cô Đào Quán POS</span>
@@ -152,7 +171,7 @@
         <!-- Action Buttons -->
         <div class="mt-4 d-flex justify-content-center gap-2 no-print">
             <button class="btn btn-primary px-4" onclick="window.print()">
-                <i class="fa-solid fa-print"></i> In Hóa Đơn
+                <i class="fa-solid fa-print"></i> In Hóa Đơn (80mm)
             </button>
             <a href="/invoices" class="btn btn-secondary px-4">
                 <i class="fa-solid fa-arrow-left"></i> Quay lại
