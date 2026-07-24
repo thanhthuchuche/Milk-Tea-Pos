@@ -1,100 +1,83 @@
-# ☕ Cô Đào Quán POS - Hệ Thống Quản Lý & Đặt Món Trà Sữa
+# 🧋 Cô Đào Quán POS - Hệ Thống Quản Lý & Đặt Món Trà Sữa
 
-Dự án đồ án cơ sở xây dựng hệ thống quản lý bán hàng (Point of Sale - POS) và đặt món trực tuyến tại bàn dành cho **Cô Đào Quán**. Được phát triển trên nền tảng **Spring Boot**, **MySQL**, **Thymeleaf**, **Bootstrap 5** và **Chart.js** với giao diện hiện đại, chuyên nghiệp.
+Hệ thống quản lý bán hàng (Point of Sale - POS) và đặt món tại bàn/online dành cho **Cô Đào Quán**. Được phát triển trên nền tảng **Spring Boot 3.x**, **Spring Security**, **H2 In-Memory DB (Zero-Config)**, **Thymeleaf**, **Bootstrap 5.3** và **Chart.js** với giao diện POS SaaS vuông vức, sắc nét và hiện đại.
 
 ---
 
 ## 🚀 Công Nghệ Sử Dụng
 
-*   **Backend**: Java 17, Spring Boot 3.x, Spring Data JPA, Spring Security (Quản lý phân quyền & xác thực).
-*   **Database**: MySQL 8.x (Tự động sinh cấu trúc bảng & nạp dữ liệu mẫu).
-*   **Frontend**: HTML5, Vanilla CSS3 (Custom Theme HSL), Thymeleaf (Template Engine), Bootstrap 5.3.3.
-*   **Charting**: Chart.js (Biểu đồ thống kê doanh thu, kho và sản phẩm bán chạy).
+*   **Backend**: Java 17, Spring Boot 3.x, Spring Data JPA, Spring Security (Role-based Authorization & Authentication).
+*   **Database**: Embedded H2 Database (`jdbc:h2:mem:milktea_pos`) - Tự động tạo bảng & nạp sẵn dữ liệu kiểm thử (Database Seeder) 100% tự động.
+*   **Frontend**: HTML5, Vanilla CSS3 (SaaS POS Design Tokens), Thymeleaf Template Engine, Bootstrap 5.3.3, FontAwesome 6.5.
+*   **Charts & Visuals**: Chart.js (Biểu đồ doanh thu hệ thống, top sản phẩm bán chạy, doanh thu tháng và tồn kho nguyên liệu).
 
 ---
 
 ## ✨ Các Tính Năng Nổi Bật
 
-1.  **Dashboard Thống Kê SaaS Cao Cấp**:
-    *   Thống kê doanh thu, đơn hàng, hóa đơn, khách hàng và trạng thái kho.
-    *   Biểu đồ đường trực quan thể hiện doanh thu theo thời gian thực (được vẽ mượt với gradient fills).
-    *   Biểu đồ cột ngang thống kê top sản phẩm bán chạy.
-    *   Biểu đồ cột đứng thể hiện lượng tồn kho nguyên liệu hiện tại.
-2.  **Đặt Món Tại Bàn Qua Mã QR (`qr-menu.html`)**:
-    *   Khách hàng quét mã QR tại bàn để xem thực đơn riêng biệt của bàn đó.
-    *   Tăng/giảm số lượng trực tiếp bằng các nút bấm cộng trừ tròn mượt mà dạng POS.
-    *   Thêm ghi chú cụ thể cho từng món uống (ví dụ: ít đá, 50% đường).
-    *   Gửi yêu cầu thanh toán trực tiếp về quầy.
-3.  **Đặt Món Online Cho Khách Hàng (`customer-menu.html`)**:
-    *   Thực đơn phân chia danh mục khoa học, thanh tìm kiếm nhanh không lag.
-    *   Giỏ hàng (`customer-cart.html`) hiển thị chia cột: danh sách món bên trái, tóm tắt thanh toán bên phải.
-    *   Thông báo thêm món bằng **Toast thông báo trượt** ở góc phải màn hình, không làm lệch giao diện.
-4.  **Hệ Thống Phân Quyền Thông Minh**:
-    *   **ADMIN**: Toàn quyền hệ thống, quản lý nhân viên, phân quyền và thiết lập voucher khuyến mãi.
-    *   **STAFF**: Truy cập trang chủ, quản lý sản phẩm, danh mục, khách hàng, bàn ăn, hóa đơn và nhập kho nguyên liệu.
-    *   **CUSTOMER**: Tự động chuyển hướng về trang đặt món cá nhân sau khi đăng nhập thành công.
-5.  **Giao Diện Cozy Premium**:
-    *   Tone màu chủ đạo lấy cảm hứng từ các quán cà phê ấm cúng (nâu trà sữa, kem bơ mềm mại, cam đất).
-    *   Thiết kế thanh điều hướng dạng hiệu ứng kính mờ (Glassmorphism).
-    *   Định dạng tiền tệ VNĐ chuyên nghiệp (`2.500.000 đ` thay vì `2500000.0`).
+1.  **Giao Diện POS SaaS Vuông Vức & Sang Trọng**:
+    *   Phông chữ chuẩn quốc tế **Plus Jakarta Sans**, phông nền màu kem cà phê ấm áp kết hợp thanh header đen espresso.
+    *   Thẻ thông tin số liệu KPI sắc nét, viền 1.5px chuẩn mực, bảng biểu hiển thị rõ ràng với badge trạng thái màu sắc nổi bật.
+2.  **Màn Hình Đăng Nhập Glassmorphism Xịn Xò (`login.html`)**:
+    *   Hình ảnh minh họa trà sữa độ phân giải cao, hiệu ứng nền lưới chuyển động (Animated Mesh Background).
+    *   Tích hợp sẵn các nút điền nhanh tài khoản kiểm thử (`Admin`, `Nhân viên`, `Khách hàng`).
+3.  **Thực Đơn Đặt Món Khách Hàng Phong Phú (`customer-menu.html`)**:
+    *   18 món uống & bánh ngọt phân chia 6 danh mục (*Trà Sữa Signature, Trà Trái Cây Tươi, Cà Phê & Macchiato, Đá Xay & Smoothies, Toppings, Bánh Ngọt*).
+    *   Thanh tìm kiếm realtime không lag, thanh danh mục dính (`Sticky Category Bar`).
+    *   Gắn nhãn **`BEST SELLER`**, **`HOT`**, đánh giá **⭐ 4.9** và **Nút Giỏ Hàng Nổi (`Floating Cart Button`)** cố định góc phải.
+4.  **Tạo & In Mã QR Đặt Món Tại Bàn (`table-list.html`)**:
+    *   Modal tự động tạo mã QR Code chuẩn theo URL bàn (`http://localhost:8082/menu/{tableId}`).
+    *   Tích hợp nút **"In Mã QR"** hỗ trợ xem trước và in ấn nhanh chóng cho chủ quán.
+5.  **In Hóa Đơn Nhiệt POS 80mm (`invoice-detail.html`)**:
+    *   Định dạng phiếu tính tiền chuẩn 80mm dành cho máy in nhiệt tại quầy thu ngân.
+6.  **Hệ Thống Phân Quyền Nhanh**:
+    *   **ADMIN**: Toàn quyền quản lý doanh thu, nhân viên, sản phẩm, nguyên liệu kho, danh mục, hóa đơn và voucher.
+    *   **STAFF**: Truy cập Dashboard, quản lý bán hàng tại bàn, xuất hóa đơn và kiểm kê nguyên liệu.
+    *   **CUSTOMER**: Tự động chuyển hướng về trang đặt món sau khi đăng nhập thành công.
 
 ---
 
-## 🛠️ Yêu Cầu Hệ Thống
+## 📦 Hướng Dẫn Kéo Code & Khởi Chạy Trên Máy Khác (Zero Config)
 
-Để khởi chạy dự án, máy của bạn cần cài đặt sẵn:
-1.  **Java Development Kit (JDK)**: Phiên bản **17 trở lên**.
-2.  **MySQL Server**: Đang hoạt động trên cổng mặc định `3306`.
-
----
-
-## 📦 Hướng Dẫn Cài Đặt & Chạy Dự Án
+Dự án đã tích hợp **Maven Wrapper** và **H2 Database chạy ngầm trên RAM**, bất kỳ máy nào pull code về cũng có thể chạy ngay mà **không cần cài đặt MySQL hay Maven thủ công**!
 
 ### Bước 1: Pull mã nguồn về máy
-Sau khi nhân bản hoặc tải zip mã nguồn về, mở thư mục dự án bằng IDE của bạn (IntelliJ IDEA, Eclipse hoặc VS Code).
-
-### Bước 2: Cấu hình tài khoản MySQL Local
-Mở tệp tin cấu hình cơ sở dữ liệu tại đường dẫn:
-`src/main/resources/application.properties`
-
-Thay đổi tên đăng nhập và mật khẩu MySQL tương thích với máy của bạn:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/milktea_pos?createDatabaseIfNotExist=true
-spring.datasource.username=root
-spring.datasource.password=NHẬP_MẬT_KHẨU_MYSQL_CỦA_BẠN_VÀO_ĐÂY
+```bash
+git clone https://github.com/.../Milk-Tea-Pos.git
+cd Milk-Tea-Pos
 ```
-> 💡 **Lưu ý**: Nhờ cấu hình `createDatabaseIfNotExist=true`, bạn **không cần tạo trước cơ sở dữ liệu** trong MySQL. Hệ thống sẽ tự động tạo database `milktea_pos` khi bắt đầu chạy!
 
-### Bước 3: Chạy ứng dụng
-Mở Terminal/Command Prompt tại thư mục gốc của dự án và chạy các lệnh tương ứng:
+### Bước 2: Chạy dự án bằng lệnh Maven Wrapper
 
-*   **Trên hệ điều hành Windows**:
+*   **Trên Windows (PowerShell / Command Prompt)**:
     ```powershell
     .\mvnw.cmd spring-boot:run
     ```
-*   **Trên hệ điều hành macOS / Linux**:
+
+*   **Trên macOS / Linux**:
     ```bash
+    chmod +x mvnw
     ./mvnw spring-boot:run
     ```
 
-Dự án sẽ tự động tải các thư viện Maven cần thiết, khởi tạo các bảng trong cơ sở dữ liệu, nạp dữ liệu mẫu và chạy tại cổng **8081**.
+Dự án sẽ tự động tải các dependency Maven, khởi tạo các bảng dữ liệu, tự động seed 18 sản phẩm mẫu và khởi chạy tại cổng **8082**.
 
-Truy cập hệ thống qua trình duyệt: **[http://localhost:8081](http://localhost:8081)**
+### Bước 3: Mở trình duyệt trải nghiệm
+Truy cập hệ thống: **[http://localhost:8082](http://localhost:8082)**
 
 ---
 
-## 🔑 Tài Khoản Thử Nghiệm Hệ Thống
+## 🔑 Tài Khoản Thử Nghiệm Nạp Sẵn (Seeded Accounts)
 
-Hệ thống đã tự động nạp sẵn (seed) các tài khoản kiểm thử sau đây để bạn dễ dàng chấm bài và đánh giá chức năng:
-
-| Vai trò | Tên đăng nhập | Mật khẩu | Trang chuyển hướng sau đăng nhập |
+| Vai trò | Tên đăng nhập | Mật khẩu | Chuyển hướng sau đăng nhập |
 | :--- | :--- | :--- | :--- |
-| **Quản trị viên (ADMIN)** | `admin` | `123456` | Dashboard Hệ Thống (`/`) |
-| **Nhân viên (STAFF)** | `staff` | `123456` | Dashboard Hệ Thống (`/`) |
-| **Khách hàng thân thiết (CUSTOMER)** | `customer` | `123456` | Trang Đặt Món Khách Hàng (`/customer/menu`) |
+| **Quản trị viên (ADMIN)** | `admin` | `123456` | Dashboard POS Hệ Thống (`/`) |
+| **Nhân viên (STAFF)** | `staff` | `123456` | Dashboard POS Hệ Thống (`/`) |
+| **Khách hàng (CUSTOMER)** | `customer` | `123456` | Thực Đơn Đặt Món Khách Hàng (`/customer/menu`) |
 
 ---
 
-## ⚙️ Cấu Hình Bảo Mật (Spring Security)
-*   **Tắt CSRF**: Chế độ bảo vệ CSRF được cấu hình tắt (`csrf().disable()`) để đảm bảo các yêu cầu gửi đơn hàng, sửa sản phẩm và thanh toán qua QR hoạt động ổn định trên môi trường kiểm thử cục bộ.
-*   **Xác thực mật khẩu**: Sử dụng thuật toán băm mật khẩu `BCryptPasswordEncoder` để mã hóa thông tin an toàn.
+## 🛡️ Tự Động Xử Lý Lỗi Bảo Mật
+*   Tự động chuyển hướng khách truy cập chưa đăng nhập tại trang chủ `/` về màn hình Đăng nhập `/login` thay vì lỗi 403 Forbidden.
+*   Chống lỗi đúp định tuyến (`Ambiguous mapping`) giữa Admin & Customer Menu Controllers.
+*   Tự động tính toán lại tổng tiền giỏ hàng (`recalculateCartTotal`) khi tăng/giảm/xóa món.

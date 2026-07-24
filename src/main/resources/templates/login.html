@@ -1,48 +1,627 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - Cô Đào Quán POS</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 & FontAwesome 6 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <!-- App CSS -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body class="login-body">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            <div class="card shadow login-card">
-                <div class="card-header text-white text-center">
-                    <h3 class="mb-1 text-white">
-                        <i class="fa-solid fa-mug-hot"></i> Cô Đào Quán
-                    </h3>
-                    <p class="mb-0 small opacity-75">Hệ thống quản lý bán hàng POS</p>
-                </div>
-                <div class="card-body p-4">
-                    <!-- Dynamic Login Error Message -->
-                    <div th:if="${param.error}" class="alert alert-danger py-2 text-center small mb-3">
-                        <i class="fa-solid fa-circle-exclamation"></i> Sai tài khoản hoặc mật khẩu!
+    <style>
+        :root {
+            --brand-primary: #8B5E3C;
+            --brand-dark: #2C1A14;
+            --brand-gold: #E6B87D;
+            --brand-accent: #E76F51;
+            --glass-bg: rgba(255, 255, 255, 0.86);
+            --glass-border: rgba(255, 255, 255, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body.login-page-v3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #120b08 url('/images/login_hero.png') no-repeat center center / cover;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dark Immersive Glass Overlay on Body */
+        body.login-page-v3::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(44, 26, 20, 0.65) 0%, rgba(18, 11, 8, 0.92) 100%);
+            z-index: 1;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Floating Light Blobs */
+        .ambient-glow {
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(230, 184, 125, 0.3) 0%, rgba(139, 94, 60, 0) 70%);
+            z-index: 2;
+            pointer-events: none;
+            filter: blur(60px);
+            animation: pulseAmbient 12s ease-in-out infinite alternate;
+        }
+        .glow-1 { top: -100px; left: -100px; }
+        .glow-2 { bottom: -100px; right: -100px; animation-delay: -6s; }
+
+        @keyframes pulseAmbient {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+            50% { transform: scale(1.2) translate(30px, 40px); opacity: 0.8; }
+            100% { transform: scale(0.9) translate(-20px, 20px); opacity: 0.4; }
+        }
+
+        /* Main Glassmorphic Wrapper */
+        .login-card-v3 {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1060px;
+            background: rgba(24, 16, 12, 0.65);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 32px;
+            box-shadow: 
+                0 40px 80px -15px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(230, 184, 125, 0.12),
+                inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            overflow: hidden;
+        }
+
+        /* Left Hero Image Panel */
+        .hero-panel-v3 {
+            position: relative;
+            background: linear-gradient(135deg, rgba(44, 26, 20, 0.85) 0%, rgba(139, 94, 60, 0.75) 100%),
+                        url('/images/login_hero.png') no-repeat center center / cover;
+            padding: 3.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-panel-v3::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(18, 11, 8, 0.2) 0%, rgba(18, 11, 8, 0.75) 100%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        .brand-header-box {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .logo-img-wrapper {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid rgba(230, 184, 125, 0.5);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+            background: #1a0f0b;
+        }
+
+        .logo-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--brand-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-title-v3 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.25;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-title-v3 span {
+            background: linear-gradient(135deg, #FFF 0%, var(--brand-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc-v3 {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.82);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Floating Feature Stat Cards */
+        .stat-cards-stack {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .stat-card-item {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card-item:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateX(6px);
+            border-color: var(--brand-gold);
+        }
+
+        .stat-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--brand-gold) 0%, var(--brand-primary) 100%);
+            color: #2C1A14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .stat-card-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .stat-card-desc {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        /* Right Form Panel (Clean Bright Glass) */
+        .form-panel-v3 {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(20px);
+            padding: 3.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-title-v3 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--brand-dark);
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-sub-v3 {
+            font-size: 0.9rem;
+            color: #6C5B52;
+            margin-bottom: 1.75rem;
+        }
+
+        /* Demo Accounts Box */
+        .demo-box-v3 {
+            background: #F8F3ED;
+            border: 1.5px dashed #DCC8B4;
+            border-radius: 18px;
+            padding: 1.1rem 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .demo-box-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #8B5E3C;
+            margin-bottom: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .demo-pills-row {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-pill-v3 {
+            background: #ffffff;
+            border: 1.5px solid #D6C2B0;
+            border-radius: 25px;
+            padding: 0.4rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #3E2723;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 5px rgba(62, 39, 35, 0.05);
+        }
+
+        .demo-pill-v3:hover {
+            background: linear-gradient(135deg, #8B5E3C 0%, #3E2723 100%);
+            color: #ffffff;
+            border-color: #3E2723;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(62, 39, 35, 0.25);
+        }
+
+        .demo-pill-v3:active {
+            transform: translateY(0);
+        }
+
+        /* Form Inputs */
+        .input-box-v3 {
+            position: relative;
+            margin-bottom: 1.35rem;
+        }
+
+        .input-icon-v3 {
+            position: absolute;
+            left: 1.15rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #A38F82;
+            font-size: 1rem;
+            z-index: 5;
+            transition: color 0.2s ease;
+        }
+
+        .input-control-v3 {
+            width: 100%;
+            height: 54px;
+            padding: 0.75rem 1.15rem 0.75rem 2.9rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--brand-dark);
+            background: #ffffff;
+            border: 1.5px solid #E2D5C7;
+            border-radius: 16px;
+            transition: all 0.25s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .input-control-v3:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 4px rgba(139, 94, 60, 0.15);
+            background: #ffffff;
+        }
+
+        .input-control-v3:focus + .input-icon-v3 {
+            color: var(--brand-primary);
+        }
+
+        .eye-toggle-v3 {
+            position: absolute;
+            right: 1.15rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #A38F82;
+            cursor: pointer;
+            z-index: 5;
+            padding: 0.25rem;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .eye-toggle-v3:hover {
+            color: var(--brand-dark);
+        }
+
+        /* Submit Button */
+        .btn-login-v3 {
+            width: 100%;
+            height: 54px;
+            background: linear-gradient(135deg, #8B5E3C 0%, #2C1A14 100%);
+            color: #ffffff;
+            font-size: 1.02rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            box-shadow: 0 10px 24px rgba(44, 26, 20, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .btn-login-v3:hover {
+            background: linear-gradient(135deg, #70472B 0%, #1A0F0B 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(44, 26, 20, 0.4);
+            color: #ffffff;
+        }
+
+        .btn-login-v3:active {
+            transform: translateY(0);
+        }
+
+        /* Alerts */
+        .alert-v3 {
+            border-radius: 14px;
+            padding: 0.9rem 1.15rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 1.25rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .alert-v3-danger {
+            background: #FDF2F0;
+            color: #D9381E;
+            border: 1px solid #F8CFCB;
+        }
+
+        .alert-v3-success {
+            background: #F0F9F5;
+            color: #198754;
+            border: 1px solid #C4E8D6;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer-text-v3 {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.82rem;
+            color: #938275;
+        }
+
+        @media (max-width: 991.98px) {
+            .hero-panel-v3 {
+                padding: 2.5rem 2rem;
+            }
+            .form-panel-v3 {
+                padding: 2.5rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="login-page-v3">
+
+    <!-- Ambient Glowing Lights -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Main Card Container -->
+    <div class="login-card-v3">
+        <div class="row g-0">
+            <!-- Left Hero Column with Realistic Boba Tea Image & Branding -->
+            <div class="col-lg-5 hero-panel-v3">
+                <div class="hero-content">
+                    <div class="brand-header-box">
+                        <div class="logo-img-wrapper">
+                            <img th:src="@{/images/logo.png}" alt="Cô Đào Quán Logo" onerror="this.src='/images/logo.png'">
+                        </div>
+                        <div>
+                            <h2 class="brand-name">CÔ ĐÀO QUÁN</h2>
+                            <span class="brand-sub">POS Management System</span>
+                        </div>
                     </div>
-                    
+
+                    <h1 class="hero-title-v3">Hệ Thống POS <span>Đỉnh Cao</span> Trà Sữa</h1>
+                    <p class="hero-desc-v3">Giải pháp quản lý bán hàng toàn diện, theo dõi doanh thu thời gian thực và trải nghiệm gọi món thông minh tại bàn.</p>
+                </div>
+
+                <!-- Floating Feature Stats Stack -->
+                <div class="stat-cards-stack">
+                    <div class="stat-card-item">
+                        <div class="stat-card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="stat-card-text">
+                            <span class="stat-card-title">Doanh Thu Realtime</span>
+                            <span class="stat-card-desc">Báo cáo tự động & chuẩn xác</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card-item">
+                        <div class="stat-card-icon"><i class="fa-solid fa-qrcode"></i></div>
+                        <div class="stat-card-text">
+                            <span class="stat-card-title">Gọi Món QR Tại Bàn</span>
+                            <span class="stat-card-desc">Tăng tốc độ phục vụ lên 200%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Form Column -->
+            <div class="col-lg-7 form-panel-v3">
+                <div>
+                    <h2 class="form-title-v3">Đăng nhập tài khoản</h2>
+                    <p class="form-sub-v3">Vui lòng nhập thông tin của bạn để truy cập hệ thống.</p>
+
+                    <!-- Quick Demo Accounts Box -->
+                    <div class="demo-box-v3">
+                        <div class="demo-box-title">
+                            <i class="fa-solid fa-bolt"></i> Thử nhanh với tài khoản mẫu:
+                        </div>
+                        <div class="demo-pills-row">
+                            <button type="button" class="demo-pill-v3" onclick="fillAccount('admin', '123456')">
+                                <i class="fa-solid fa-user-shield" style="color: #8B5E3C;"></i> Admin (Quản trị)
+                            </button>
+                            <button type="button" class="demo-pill-v3" onclick="fillAccount('staff', '123456')">
+                                <i class="fa-solid fa-user-tie" style="color: #8B5E3C;"></i> Staff (Nhân viên)
+                            </button>
+                            <button type="button" class="demo-pill-v3" onclick="fillAccount('customer', '123456')">
+                                <i class="fa-solid fa-mug-hot" style="color: #8B5E3C;"></i> Customer (Khách)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Spring Security Error & Logout Messages -->
+                    <div th:if="${param.error}" class="alert-v3 alert-v3-danger">
+                        <i class="fa-solid fa-circle-exclamation fs-5"></i>
+                        <span>Tài khoản hoặc mật khẩu không chính xác!</span>
+                    </div>
+
+                    <div th:if="${param.logout}" class="alert-v3 alert-v3-success">
+                        <i class="fa-solid fa-circle-check fs-5"></i>
+                        <span>Bạn đã đăng xuất thành công.</span>
+                    </div>
+
+                    <!-- Form -->
                     <form th:action="@{/login}" method="post">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tài khoản</label>
-                            <input type="text" name="username" class="form-control" placeholder="Nhập tên đăng nhập..." required>
+                        <!-- Username -->
+                        <div class="input-box-v3">
+                            <i class="fa-solid fa-user input-icon-v3"></i>
+                            <input type="text" 
+                                   id="usernameInput"
+                                   name="username" 
+                                   class="input-control-v3" 
+                                   placeholder="Tên đăng nhập..." 
+                                   required 
+                                   autocomplete="username">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Mật khẩu</label>
-                            <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." required>
+
+                        <!-- Password -->
+                        <div class="input-box-v3">
+                            <i class="fa-solid fa-lock input-icon-v3"></i>
+                            <input type="password" 
+                                   id="passwordInput"
+                                   name="password" 
+                                   class="input-control-v3" 
+                                   placeholder="Mật khẩu..." 
+                                   required 
+                                   autocomplete="current-password">
+                            <i class="fa-solid fa-eye eye-toggle-v3" id="togglePassword" onclick="togglePasswordVisibility()"></i>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
-                            <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+
+                        <!-- Remember & Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-4 px-1" style="font-size: 0.88rem;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe" style="cursor: pointer;">
+                                <label class="form-check-label text-muted" for="rememberMe" style="cursor: pointer;">Ghi nhớ đăng nhập</label>
+                            </div>
+                            <a href="#" class="text-decoration-none" style="color: #8B5E3C; font-weight: 700;" onclick="alert('Vui lòng liên hệ Quản trị viên (Admin) để hỗ trợ reset mật khẩu!'); return false;">Quên mật khẩu?</a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-login-v3">
+                            <span>VÀO HỆ THỐNG POS</span>
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
                         </button>
                     </form>
+
+                    <div class="footer-text-v3">
+                        &copy; 2026 Cô Đào Quán POS Management. All rights reserved.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Interactive Scripts -->
+    <script>
+        function fillAccount(username, password) {
+            const userInp = document.getElementById('usernameInput');
+            const passInp = document.getElementById('passwordInput');
+            
+            userInp.value = username;
+            passInp.value = password;
+            
+            userInp.style.borderColor = '#8B5E3C';
+            passInp.style.borderColor = '#8B5E3C';
+            
+            setTimeout(() => {
+                userInp.style.borderColor = '#E2D5C7';
+                passInp.style.borderColor = '#E2D5C7';
+            }, 600);
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

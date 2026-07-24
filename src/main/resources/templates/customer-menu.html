@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Đặt món - Cô Đào Quán</title>
+    <title>Thực đơn đặt món - Cô Đào Quán</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
@@ -10,111 +10,197 @@
         html {
             scroll-behavior: smooth;
         }
-        /* Sticky Category Navigation Bar */
-        .category-bar {
+        /* Hero Banner */
+        .menu-hero-banner {
+            background: linear-gradient(135deg, #1C120C 0%, #3E2723 60%, #8B5E3C 100%);
+            border-radius: var(--radius-lg);
+            color: #ffffff;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-dark);
+            box-shadow: var(--shadow-md);
+        }
+        .menu-hero-banner::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            bottom: -30px;
+            width: 220px;
+            height: 220px;
+            background: rgba(230, 184, 125, 0.12);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .promo-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(230, 184, 125, 0.2);
+            color: var(--secondary-color);
+            border: 1px solid rgba(230, 184, 125, 0.35);
+            padding: 0.35rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Sticky Category Filter Bar */
+        .category-filter-bar {
             position: sticky;
-            top: 70px;
-            z-index: 999;
-            background: rgba(250, 246, 240, 0.95);
-            backdrop-filter: blur(10px);
+            top: 65px;
+            z-index: 995;
+            background: rgba(245, 239, 230, 0.96);
+            backdrop-filter: blur(12px);
             border-bottom: 1.5px solid var(--border-color);
-            padding: 0.8rem 0;
-            box-shadow: 0 4px 10px rgba(111, 78, 55, 0.03);
+            padding: 0.85rem 0;
+            margin-bottom: 2rem;
         }
-        .category-pills::-webkit-scrollbar {
-            display: none;
-        }
-        .category-pills {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .category-pills-wrapper {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.65rem;
             overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
             padding: 0.1rem 0;
         }
+        .category-pills-wrapper::-webkit-scrollbar {
+            display: none;
+        }
         .category-btn {
-            border: 1px solid var(--border-color) !important;
+            border: 1.5px solid var(--border-color) !important;
             color: var(--primary-dark) !important;
-            background: var(--bg-white) !important;
-            font-weight: 600;
+            background: #ffffff !important;
+            font-weight: 700;
             font-size: 0.85rem;
-            border-radius: 30px;
-            padding: 0.5rem 1.25rem;
+            border-radius: 25px;
+            padding: 0.5rem 1.2rem;
             white-space: nowrap;
             box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
         }
         .category-btn:hover, .category-btn.active {
             background-color: var(--primary-color) !important;
             border-color: var(--primary-color) !important;
             color: #ffffff !important;
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 94, 60, 0.25);
         }
+
         /* Toast Notification Styling */
         .notification-toast {
             position: fixed;
-            top: 90px;
+            top: 85px;
             right: 25px;
             z-index: 1050;
             background: var(--primary-dark);
             color: #ffffff;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
-            padding: 1rem 1.5rem;
+            padding: 0.9rem 1.35rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.85rem;
             border-left: 5px solid var(--secondary-color);
-            transform: translateX(120%);
+            transform: translateX(130%);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .notification-toast.show {
             transform: translateX(0);
         }
+
         /* Search Box Design */
-        .search-box-container {
-            max-width: 500px;
+        .search-box-wrapper {
+            max-width: 580px;
             margin: 0 auto;
             position: relative;
         }
-        .search-box-container input {
+        .search-box-wrapper input {
             border-radius: 30px;
-            padding: 0.8rem 1.5rem 0.8rem 3rem;
-            font-weight: 500;
+            padding: 0.85rem 1.5rem 0.85rem 3.2rem;
+            font-weight: 600;
             box-shadow: var(--shadow-sm);
             border: 1.5px solid var(--border-color);
+            background: #ffffff;
+            font-size: 0.95rem;
         }
-        .search-box-container i {
+        .search-box-wrapper i {
             position: absolute;
             left: 1.25rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
-        .product-image-container {
-            width: 100%;
-            height: 180px;
-            position: relative;
+
+        /* Product Card Styles */
+        .product-card-item {
+            transition: var(--transition-smooth);
+        }
+        .product-card-item .card {
+            border-radius: var(--radius-md) !important;
+            border: 1.5px solid var(--border-color);
             background: #ffffff;
+            transition: var(--transition-smooth);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card-item .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+        .product-img-box {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            background: #FDFBF7;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .product-image-container img {
-            max-width: 100%;
-            max-height: 100%;
+        .product-img-box img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            transition: var(--transition-smooth);
+            transition: transform 0.4s ease;
         }
-        .product-card:hover .product-image-container img {
-            transform: scale(1.06);
+        .product-card-item:hover .product-img-box img {
+            transform: scale(1.08);
         }
+
+        .product-badge-hot {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #DC3545;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+        }
+
+        .product-rating {
+            color: #FFC107;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
         .category-section-title {
             position: relative;
-            padding-left: 1rem;
+            padding-left: 1.1rem;
             color: var(--primary-dark);
             font-weight: 800;
+            font-size: 1.35rem;
         }
         .category-section-title::before {
             content: '';
@@ -122,106 +208,202 @@
             left: 0;
             top: 15%;
             height: 70%;
-            width: 5px;
+            width: 6px;
             background: var(--primary-color);
             border-radius: 4px;
+        }
+
+        /* Floating Cart Quick Button */
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1040;
+            background: linear-gradient(135deg, #3E2723 0%, #8B5E3C 100%);
+            color: #ffffff !important;
+            padding: 0.85rem 1.6rem;
+            border-radius: 40px;
+            box-shadow: 0 8px 24px rgba(44, 26, 20, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            border: 2px solid var(--secondary-color);
+            transition: var(--transition-smooth);
+        }
+        .floating-cart-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 12px 30px rgba(44, 26, 20, 0.45);
+            color: #ffffff !important;
         }
     </style>
 </head>
 <body>
 
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <!-- Success Notification Toast -->
 <div th:if="${successMessage}" class="notification-toast shadow-lg" id="successToast">
-    <i class="fa-solid fa-circle-check text-warning fa-lg"></i>
+    <i class="fa-solid fa-circle-check text-warning fa-xl"></i>
     <div>
-        <strong class="d-block text-white small">Giỏ hàng cập nhật</strong>
-        <span class="small opacity-90" th:text="'Đã thêm ' + ${successMessage} + ' vào giỏ hàng'">Đã thêm món</span>
+        <strong class="d-block text-white small">Đã thêm vào giỏ hàng</strong>
+        <span class="small opacity-90" th:text="${successMessage}">Tên món</span>
     </div>
 </div>
 
 <div class="container py-4">
 
-    <!-- Header Block -->
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4 gap-3">
-        <h2 class="mb-0">
-            <i class="fa-solid fa-mug-hot text-primary"></i> Menu Cô Đào Quán
-        </h2>
-        <a href="/customer-cart" class="btn btn-primary btn-lg shadow-sm">
-            <i class="bi bi-cart3"></i> Giỏ hàng của tôi
-        </a>
-    </div>
-
-    <!-- Search box -->
-    <div class="mb-4">
-        <div class="search-box-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm nước uống, toppings...">
+    <!-- Hero Banner -->
+    <div class="menu-hero-banner">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="promo-pill">
+                    <i class="fa-solid fa-bolt"></i> Ưu đãi đặc biệt: Nhập CODAOQUAN20 giảm ngay 20%
+                </div>
+                <h1 class="text-white mb-2 fw-extrabold" style="font-size: 2.1rem;">Thực Đơn Cô Đào Quán 🧋</h1>
+                <p class="mb-0 text-white-50 fs-6">Thưởng thức Trà Sữa Hoàng Gia, Trà Trái Cây Tươi & Cà Phê Muối đậm vị truyền thống.</p>
+            </div>
+            <div class="col-lg-4 text-end d-none d-lg-block">
+                <a href="/customer-cart" class="btn btn-warning btn-lg px-4 shadow-sm" style="border-radius: 30px; font-weight: 800;">
+                    <i class="bi bi-bag-check-fill me-1"></i> Xem Giỏ Hàng
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- Category selector bar -->
-    <div class="category-bar mb-4">
+    <!-- Search Box -->
+    <div class="mb-4">
+        <div class="search-box-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm món nước, trà sữa, bánh ngọt...">
+        </div>
+    </div>
+
+    <!-- Category Filter Bar (Sticky) -->
+    <div class="category-filter-bar">
         <div class="container-fluid">
-            <div class="category-pills justify-content-center">
-                <a class="btn category-btn" 
+            <div class="category-pills-wrapper justify-content-start justify-content-md-center">
+                <a class="btn category-btn active btn-cat-all" href="#all-products">Tất cả món</a>
+                <a class="btn category-btn btn-cat-filter" 
                    th:each="c : ${categories}" 
                    th:href="'#category-' + ${c.categoryId}" 
+                   th:data-category-id="${c.categoryId}"
                    th:text="${c.categoryName}">Danh mục</a>
             </div>
         </div>
     </div>
 
-    <!-- Products grid catalog -->
-    <div th:each="category : ${categories}" class="mb-5">
-        <h4 class="mt-4 mb-4 category-section-title" 
-            th:id="'category-' + ${category.categoryId}" 
-            th:text="${category.categoryName}">Tên Danh Mục</h4>
+    <!-- Products Catalog Grid -->
+    <div th:each="category : ${categories}" 
+         class="mb-5 category-block" 
+         th:id="'category-block-' + ${category.categoryId}">
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="category-section-title mb-0" 
+                th:id="'category-' + ${category.categoryId}" 
+                th:text="${category.categoryName}">Tên Danh Mục</h4>
+            <span class="text-muted small fw-semibold" th:text="${category.description}">Mô tả danh mục</span>
+        </div>
 
         <div class="row g-4">
-            <div class="col-xl-3 col-lg-4 col-sm-6 mb-2 product-card" 
-                 th:each="product : ${@productService.getProductsByCategory(category.categoryId)}">
+            <div class="col-xl-3 col-lg-4 col-sm-6 product-card-item" 
+                 th:each="product, iterStat : ${@productService.getProductsByCategory(category.categoryId)}">
+                
                 <div class="card h-100">
-                    <div class="product-image-container p-2">
+                    <!-- Badge Hot/Best Seller -->
+                    <div class="product-badge-hot" th:if="${iterStat.index == 0}">BEST SELLER</div>
+                    <div class="product-badge-hot" style="background:#E67E22;" th:if="${iterStat.index == 1}">HOT</div>
+
+                    <div class="product-img-box">
                         <img th:src="${product.image != null and #strings.startsWith(product.image, 'http') ? product.image : '/images/' + product.image}" 
-                             class="card-img-top rounded-4" 
-                             alt="Hình sản phẩm">
+                             alt="Hình sản phẩm"
+                             loading="lazy">
                     </div>
-                    <div class="card-body d-flex flex-column text-center p-3">
-                        <h5 class="fw-bold product-name mb-2 text-truncate" th:text="${product.productName}">Tên sản phẩm</h5>
-                        <p class="text-muted small text-truncate-2 mb-3" style="min-height: 40px;" th:text="${product.description}">Mô tả</p>
+                    
+                    <div class="card-body d-flex flex-column p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="product-rating"><i class="fa-solid fa-star me-1"></i>4.9</span>
+                            <span class="badge bg-light text-muted fw-bold">Giao nhanh</span>
+                        </div>
+                        <h5 class="fw-bold product-name mb-1 text-truncate text-dark" th:text="${product.productName}">Tên sản phẩm</h5>
+                        <p class="text-muted small text-truncate-2 mb-3" style="min-height: 38px; line-height: 1.4;" th:text="${product.description}">Mô tả sản phẩm thơm ngon chuẩn vị</p>
                         
-                        <div class="mt-auto">
-                            <h5 class="text-danger fw-bold mb-3" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h5>
-                            <a class="btn btn-outline-primary w-100 py-2" 
-                               th:href="@{/customer-cart/add/{customerId}/{productId}(customerId=1, productId=${product.productId})}">
-                                <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+                        <div class="mt-auto pt-2 border-top">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">Giá bán</span>
+                                <h5 class="text-danger fw-bold mb-0" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h5>
+                            </div>
+                            <a class="btn btn-primary w-100 py-2" 
+                               th:href="@{/customer-cart/add/{customerId}/{productId}(customerId=${customer != null ? customer.customerId : 1}, productId=${product.productId})}">
+                                <i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ
                             </a>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+
 </div>
+
+<!-- Floating Quick Cart Button -->
+<a href="/customer-cart" class="floating-cart-btn">
+    <i class="bi bi-cart3 fs-5"></i>
+    <span>Xem Giỏ Hàng</span>
+    <span class="badge bg-warning text-dark rounded-circle px-2 py-1 fs-6">!</span>
+</a>
 
 <script>
     // Search function logic
     const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("keyup", function () {
-        const keyword = this.value.toLowerCase();
-        const cards = document.querySelectorAll(".product-card");
-        cards.forEach(card => {
-            const name = card.querySelector(".product-name").innerText.toLowerCase();
-            const desc = card.querySelector(".text-muted").innerText.toLowerCase();
-            if (name.includes(keyword) || desc.includes(keyword)) {
-                card.style.display = "";
-            } else {
-                card.style.display = "none";
-            }
+    if(searchInput) {
+        searchInput.addEventListener("keyup", function () {
+            const keyword = this.value.toLowerCase();
+            const cards = document.querySelectorAll(".product-card-item");
+            cards.forEach(card => {
+                const name = card.querySelector(".product-name").innerText.toLowerCase();
+                const desc = card.querySelector(".text-muted").innerText.toLowerCase();
+                if (name.includes(keyword) || desc.includes(keyword)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".btn-cat-all").forEach(btn => {
+            btn.addEventListener("click", function(e) {
+                filterCategory('all', e);
+            });
+        });
+
+        document.querySelectorAll(".btn-cat-filter").forEach(btn => {
+            btn.addEventListener("click", function(e) {
+                const catId = this.getAttribute("data-category-id");
+                filterCategory(catId, e);
+            });
         });
     });
+
+    // Category filter function
+    function filterCategory(catId, event) {
+        document.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
+        if(event && event.target) {
+            event.target.classList.add("active");
+        }
+
+        const blocks = document.querySelectorAll(".category-block");
+        blocks.forEach(block => {
+            if (catId === 'all' || block.id === 'category-block-' + catId) {
+                block.style.display = "";
+            } else {
+                block.style.display = "none";
+            }
+        });
+    }
 
     // Toast show animation and auto hide
     window.addEventListener("DOMContentLoaded", () => {
@@ -233,17 +415,8 @@
             
             setTimeout(() => {
                 toast.classList.remove("show");
-            }, 3000);
+            }, 3200);
         }
-    });
-
-    // Auto active category button on click/scroll
-    const categoryBtns = document.querySelectorAll(".category-btn");
-    categoryBtns.forEach(btn => {
-        btn.addEventListener("click", function() {
-            categoryBtns.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-        });
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
 public class SecurityConfig {
@@ -30,6 +32,7 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/webjars/**",
                                 "/login",
+                                "/h2-console/**",
                                 "/menu/**",
                                 "/order-at-table/**",
                                 "/decrease-order/**",
@@ -92,6 +95,8 @@ public class SecurityConfig {
                         .authenticated()
                 )
 
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+
                 .formLogin(form -> form
 
                         .loginPage("/login")
@@ -123,6 +128,20 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login")
 
                         .permitAll()
+                )
+
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendRedirect("/login");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                            if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"))) {
+                                response.sendRedirect("/customer/menu");
+                            } else {
+                                response.sendRedirect("/login");
+                            }
+                        })
                 );
 
         return http.build();
