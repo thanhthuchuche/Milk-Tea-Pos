@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* Master Design Tokens - Sharp POS SaaS Theme */
 :root {
@@ -33,14 +33,21 @@ body {
     -moz-osx-font-smoothing: grayscale;
     font-size: 0.92rem;
     line-height: 1.55;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.012em;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 800;
+h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
     color: var(--primary-dark);
     letter-spacing: -0.025em;
 }
+
+h1 { font-weight: 800; font-size: 2.1rem; }
+h2 { font-weight: 800; font-size: 1.65rem; }
+h3 { font-weight: 700; font-size: 1.35rem; }
+h4 { font-weight: 700; font-size: 1.15rem; }
+h5 { font-weight: 700; font-size: 1.05rem; }
 
 a {
     color: var(--primary-color);
@@ -68,17 +75,18 @@ a:hover {
 }
 
 /* Page Section Titles */
-.container h2 {
+.container h2, .container-fluid h2, .container-fluid h3 {
+    font-family: 'Outfit', sans-serif;
     position: relative;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.35rem;
     margin-bottom: 1.5rem;
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
-    font-size: 1.6rem;
+    font-weight: 800;
 }
 
-/* SaaS Header & Navigation Bar */
+/* SaaS Header & Navigation Bar Typography */
 .navbar {
     background: linear-gradient(135deg, #1C120C 0%, #3E2723 100%) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -87,8 +95,9 @@ a:hover {
 }
 
 .navbar-brand {
+    font-family: 'Outfit', sans-serif;
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1.28rem;
     letter-spacing: -0.02em;
     color: #ffffff !important;
     display: flex;
@@ -101,32 +110,57 @@ a:hover {
 }
 
 .navbar-nav .nav-link {
+    font-family: 'Outfit', sans-serif;
     font-weight: 600;
-    font-size: 0.88rem;
-    padding: 0.45rem 0.9rem !important;
-    color: rgba(255, 255, 255, 0.78) !important;
+    font-size: 0.92rem;
+    padding: 0.5rem 0.95rem !important;
+    color: rgba(255, 255, 255, 0.82) !important;
     border-radius: var(--radius-sm);
     transition: var(--transition-smooth);
-    margin: 0 0.1rem;
+    letter-spacing: -0.01em;
 }
 
-.navbar-nav .nav-link:hover, .navbar-nav .nav-item.active .nav-link {
-    background-color: rgba(255, 255, 255, 0.14);
+.navbar-nav .nav-link:hover, .navbar-nav .nav-item.active .nav-link, .navbar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
     color: #ffffff !important;
+    font-weight: 700;
 }
 
-.navbar-text {
-    font-weight: 700;
-    padding: 0.35rem 0.9rem;
-    background: rgba(230, 184, 125, 0.15);
-    color: var(--secondary-color) !important;
+/* Role Badges in Navbar */
+.role-badge-admin {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    background: #2C1A14 !important;
+    color: #E6B87D !important;
+    border: 1px solid #E6B87D !important;
+    padding: 0.35rem 0.75rem;
     border-radius: 20px;
-    font-size: 0.82rem;
-    border: 1px solid rgba(230, 184, 125, 0.3);
-    margin-right: 0.75rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+    font-size: 0.78rem;
+}
+
+.role-badge-staff {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    background: #0F4C5C !important;
+    color: #FFFFFF !important;
+    border: 1px solid #1E829B !important;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+}
+
+.role-badge-customer {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    background: #5C4033 !important;
+    color: #F5EFE6 !important;
+    border: 1px solid #8B5E3C !important;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
 }
 
 /* Sharp Structured Cards */
@@ -141,10 +175,11 @@ a:hover {
 }
 
 .card-header {
+    font-family: 'Outfit', sans-serif;
     background: linear-gradient(135deg, #3E2723 0%, #5C4033 100%) !important;
     color: #ffffff !important;
     font-weight: 700;
-    font-size: 0.98rem;
+    font-size: 1rem;
     letter-spacing: -0.01em;
     border-bottom: 1.5px solid var(--border-dark);
     padding: 0.95rem 1.35rem;
@@ -156,13 +191,16 @@ a:hover {
 
 /* Form Controls */
 .form-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
     color: var(--primary-dark);
     margin-bottom: 0.35rem;
     font-size: 0.86rem;
+    letter-spacing: -0.01em;
 }
 
 .form-control, .form-select {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     border: 1.5px solid var(--border-color);
     border-radius: var(--radius-sm);
     padding: 0.6rem 0.9rem;
@@ -199,11 +237,12 @@ a:hover {
 }
 
 .table thead th {
+    font-family: 'Outfit', sans-serif;
     background-color: #2C1A14 !important;
     color: #ffffff !important;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     letter-spacing: 0.05em;
     padding: 0.95rem 1.15rem;
     border: none;
@@ -211,6 +250,7 @@ a:hover {
 }
 
 .table tbody td {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     padding: 0.95rem 1.15rem;
     vertical-align: middle;
     border-bottom: 1px solid #EBE3D7;
@@ -228,8 +268,16 @@ a:hover {
     background-color: #FAF6F1;
 }
 
+/* Price & Numeric Display Typography */
+.price-display, .text-danger.fw-bold, .amount-display {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
 /* Sharp Action Buttons */
 .btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
     font-size: 0.85rem;
     border-radius: var(--radius-sm);
@@ -241,6 +289,7 @@ a:hover {
     gap: 0.45rem;
     border: 1.5px solid transparent;
     cursor: pointer;
+    letter-spacing: -0.01em;
 }
 
 .btn-primary {
@@ -322,11 +371,13 @@ a:hover {
 
 /* Sharp Status Badges */
 .badge {
-    padding: 0.4em 0.75em;
+    font-family: 'Outfit', sans-serif;
+    padding: 0.45em 0.8em;
     font-weight: 700;
     font-size: 0.74rem;
     border-radius: 6px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
