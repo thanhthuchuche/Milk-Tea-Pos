@@ -388,10 +388,85 @@
     </div>
 </div>
 
+<!-- VIETQR PAYMENT MODAL POPUP -->
+<div class="modal fade" id="vietQrModal" tabindex="-1" aria-labelledby="vietQrModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            
+            <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1C120C 0%, #3E2723 100%);">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-qrcode text-warning fs-4"></i>
+                    <h5 class="modal-title font-heading fw-bold mb-0 text-white" id="vietQrModalLabel">Xác Nhận Thanh Toán VietQR</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center p-4">
+                
+                <!-- Live Dynamic VietQR Image -->
+                <div class="position-relative d-inline-block mb-3">
+                    <img id="modalVietQrImage" 
+                         src="" 
+                         class="img-fluid rounded-4 shadow-sm border p-2 bg-white" 
+                         style="max-width: 270px; height: auto;" 
+                         alt="Mã VietQR Thanh Toán">
+                </div>
+
+                <!-- Transfer Information Breakdown -->
+                <div class="card border-0 bg-light rounded-3 p-3 text-start mb-3">
+                    <div class="d-flex justify-content-between mb-1 small text-muted">
+                        <span>Chủ tài khoản:</span>
+                        <strong class="text-dark" th:text="${bankSetting != null ? bankSetting.accountName : 'NGUYEN THAI THANH THU'}">NGUYEN THAI THANH THU</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1 small text-muted">
+                        <span>Số tài khoản:</span>
+                        <strong class="text-primary font-heading fs-6" th:text="${bankSetting != null ? bankSetting.accountNo : '0356501309'}">0356501309</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1 small text-muted">
+                        <span>Ngân hàng:</span>
+                        <strong class="text-dark" th:text="${bankSetting != null ? bankSetting.bankId : 'MB'}">MB Bank</strong>
+                    </div>
+                    <div class="d-flex justify-content-between pt-2 border-top mt-1 align-items-center">
+                        <span class="fw-bold text-dark">Số tiền cần chuyển:</span>
+                        <span class="fw-bold text-danger fs-4 font-heading" id="modalTotalAmount">0 đ</span>
+                    </div>
+                </div>
+
+                <!-- Pulsing Waiting Status Indicator -->
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-1 text-success fw-bold small">
+                    <div class="spinner-grow spinner-grow-sm text-success" role="status"></div>
+                    <span>Đang chờ khách hàng quét mã chuyển khoản...</span>
+                </div>
+                <div class="text-muted small">Sau khi ứng dụng ngân hàng báo thành công, thu ngân bấm xác nhận bên dưới.</div>
+
+            </div>
+
+            <div class="modal-footer bg-light border-0 p-3 justify-content-between">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-bold" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Hủy / Chọn lại
+                </button>
+                <button type="button" class="btn btn-success rounded-pill px-4 py-2 fw-bold text-white shadow-sm" id="confirmVietQrPaidBtn">
+                    <i class="fa-solid fa-circle-check me-1"></i> ✅ ĐÃ NHẬN ĐỦ TIỀN & IN HÓA ĐƠN
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+<script th:inline="javascript">
     document.addEventListener("DOMContentLoaded", function() {
         const ticketItems = {};
+        
+        /* Bank Info for VietQR Modal */
+        /*[[${bankSetting}]]*/
+        const bankId = /*[[${bankSetting != null ? bankSetting.bankId : 'MB'}]]*/ 'MB';
+        const accountNo = /*[[${bankSetting != null ? bankSetting.accountNo : '0356501309'}]]*/ '0356501309';
+        const accountName = /*[[${bankSetting != null ? bankSetting.accountName : 'NGUYEN THAI THANH THU'}]]*/ 'NGUYEN THAI THANH THU';
+
+        let currentCalculatedTotal = 0;
+        let isConfirmedCheckout = false;
 
         function formatVnd(amount) {
             return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
@@ -516,12 +591,51 @@
                 document.getElementById("discountRow").style.display = "none";
             }
 
-            const finalTotal = Math.max(0, rawTotal - discountAmount);
-            document.getElementById("finalTotalText").innerText = formatVnd(finalTotal);
+            currentCalculatedTotal = Math.max(0, rawTotal - discountAmount);
+            document.getElementById("finalTotalText").innerText = formatVnd(currentCalculatedTotal);
         }
 
         document.getElementById("voucherSelect").addEventListener("change", function() {
             renderTicket();
+        });
+
+        // FORM SUBMISSION & VIETQR MODAL INTERCEPTION
+        const posForm = document.getElementById("posCheckoutForm");
+        const vietQrModal = new bootstrap.Modal(document.getElementById('vietQrModal'));
+
+        posForm.addEventListener("submit", function(e) {
+            if (isConfirmedCheckout) {
+                return; // Let form submit
+            }
+
+            const keys = Object.keys(ticketItems);
+            if (keys.length === 0) {
+                e.preventDefault();
+                alert("Vui lòng chọn ít nhất 1 món uống trước khi thanh toán!");
+                return;
+            }
+
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if (paymentMethod === 'BANK_TRANSFER') {
+                e.preventDefault(); // Stop immediate submission
+
+                // Build Dynamic VietQR URL
+                const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${currentCalculatedTotal}&addInfo=THANH%20TOAN%20DON%20HANG%20POS&accountName=${encodeURIComponent(accountName)}`;
+                
+                document.getElementById("modalVietQrImage").src = qrUrl;
+                document.getElementById("modalTotalAmount").innerText = formatVnd(currentCalculatedTotal);
+
+                // Show VietQR Modal Popup
+                vietQrModal.show();
+            }
+        });
+
+        // Confirm Payment Received in Modal
+        document.getElementById("confirmVietQrPaidBtn").addEventListener("click", function() {
+            isConfirmedCheckout = true;
+            vietQrModal.hide();
+            posForm.submit(); // Submit form and proceed to 80mm receipt print
         });
 
         // Search Filter
