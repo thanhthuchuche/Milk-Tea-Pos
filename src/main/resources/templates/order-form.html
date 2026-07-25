@@ -6,44 +6,170 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
+        /* POS Layout Custom Micro-Styles */
+        .pos-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Filter Pills Scrollable Container */
+        .pos-category-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: thin;
+        }
+        .pos-category-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        .pos-category-scroll::-webkit-scrollbar-thumb {
+            background: #D9C3B0;
+            border-radius: 4px;
+        }
+
+        .category-pill-btn {
+            white-space: nowrap;
+            border: 1.5px solid var(--border-color);
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.45rem 1rem;
+            border-radius: 20px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .category-pill-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+        .category-pill-btn.active {
+            background-color: var(--primary-color) !important;
+            color: #FFFFFF !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 4px 10px rgba(139, 94, 60, 0.25);
+        }
+
+        /* Product Cards */
         .pos-product-card {
             border: 1.5px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             background: #FFFFFF;
             cursor: pointer;
             transition: var(--transition-smooth);
             overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
         }
         .pos-product-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             border-color: var(--primary-color);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
+        }
+        .pos-product-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            background-color: #F8F4EF;
         }
         .pos-product-img {
             width: 100%;
-            height: 90px;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
         }
+        .pos-product-card:hover .pos-product-img {
+            transform: scale(1.06);
+        }
+        .pos-product-title {
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: var(--text-dark);
+            line-height: 1.3;
+            min-height: 38px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .pos-product-price {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: #D9534F;
+        }
+
+        /* Right Ticket Sidebar */
         .pos-ticket-card {
             border: 1.5px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             background: #FFFFFF;
             position: sticky;
-            top: 80px;
+            top: 85px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
         }
+        .pos-ticket-header {
+            background: linear-gradient(135deg, #2C1A14 0%, #4A2E24 100%);
+            color: #FFFFFF;
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Ticket Item Rows */
         .ticket-item-row {
-            border-bottom: 1px dashed var(--border-color);
-            padding: 0.6rem 0;
+            border-bottom: 1px dashed #E2D5C7;
+            padding: 0.75rem 0.5rem;
+            transition: background 0.15s ease;
+        }
+        .ticket-item-row:hover {
+            background-color: #FAF6F0;
+        }
+        .ticket-item-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-dark);
+            line-height: 1.25;
+            margin-bottom: 2px;
+        }
+        .ticket-item-unit-price {
+            font-size: 0.78rem;
+            color: var(--text-muted);
         }
         .qty-mini-btn {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             padding: 0;
-            border-radius: 4px;
+            border-radius: 6px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: var(--transition-smooth);
+        }
+        .qty-mini-btn:hover {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            border-color: var(--primary-color);
+        }
+
+        /* Method Toggle Pills */
+        .payment-method-toggle .btn-check:checked + .btn {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 2px 6px rgba(139, 94, 60, 0.2);
         }
     </style>
 </head>
@@ -51,26 +177,26 @@
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container-fluid px-4 py-3">
+<div class="container-fluid px-3 px-lg-4 py-3 pos-container">
 
     <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="mb-0 fw-bold">
-            <i class="fa-solid fa-cash-register text-primary me-2"></i> Màn Hình Bán Hàng Tại Quầy (POS Thu Ngân)
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <h3 class="mb-0 fw-bold d-flex align-items-center gap-2">
+            <i class="fa-solid fa-cash-register text-primary fs-4"></i> Màn Hình Bán Hàng Tại Quầy (POS Thu Ngân)
         </h3>
         <div class="d-flex gap-2">
-            <a href="/orders" class="btn btn-secondary btn-sm">
-                <i class="fa-solid fa-list"></i> Danh sách đơn hàng
+            <a href="/orders" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-list me-1"></i> Danh sách đơn hàng
             </a>
-            <a href="/invoices" class="btn btn-outline-primary btn-sm">
-                <i class="fa-solid fa-file-invoice-dollar"></i> Hóa đơn thanh toán
+            <a href="/invoices" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-file-invoice-dollar me-1"></i> Hóa đơn thanh toán
             </a>
         </div>
     </div>
 
     <!-- Error Alert -->
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fa-solid fa-circle-exclamation me-2"></i> <span th:text="${errorMessage}">Lỗi!</span>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 mb-3 shadow-sm" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i> <span th:text="${errorMessage}">Lỗi xảy ra!</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
@@ -78,100 +204,126 @@
         
         <!-- LEFT COLUMN: Product Menu Catalog (65% width) -->
         <div class="col-lg-7 col-xl-8">
-            <div class="card shadow-sm border-0 mb-3">
-                <div class="card-body p-3">
-                    <!-- Search & Filter Controls -->
-                    <div class="row g-2 mb-3">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                                <input type="text" id="productSearchInput" class="form-control border-start-0" placeholder="Tìm tên món uống, trà sữa, bánh ngọt...">
-                            </div>
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-3 p-md-4">
+                    
+                    <!-- Search Input Bar -->
+                    <div class="mb-3">
+                        <div class="input-group shadow-sm rounded-pill overflow-hidden border">
+                            <span class="input-group-text bg-white border-0 ps-3">
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            </span>
+                            <input type="text" id="productSearchInput" class="form-control border-0 py-2 fs-6" placeholder="Tìm tên món uống, trà sữa, bánh ngọt (gõ tiếng Việt hoặc viết tắt)...">
+                            <button class="btn bg-white text-muted border-0 pe-3" type="button" onclick="document.getElementById('productSearchInput').value=''; document.getElementById('productSearchInput').dispatchEvent(new Event('input'));">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <div class="btn-group w-100" role="group">
-                                <button type="button" class="btn btn-outline-primary active category-filter-btn" data-category="ALL">Tất cả</button>
-                                <button th:each="cat : ${categories}" 
-                                        type="button" 
-                                        class="btn btn-outline-primary category-filter-btn" 
-                                        th:data-category="${cat.categoryId}" 
-                                        th:text="${cat.categoryName}">Danh mục</button>
-                            </div>
+                    </div>
+
+                    <!-- Category Pills Filter Bar -->
+                    <div class="mb-3">
+                        <div class="pos-category-scroll">
+                            <button type="button" class="category-pill-btn active" data-category="ALL">
+                                <i class="fa-solid fa-border-all"></i> Tất cả món
+                            </button>
+                            <button th:each="cat : ${categories}" 
+                                    type="button" 
+                                    class="category-pill-btn" 
+                                    th:data-category="${cat.categoryId}">
+                                <i class="fa-solid fa-mug-hot"></i> <span th:text="${cat.categoryName}">Danh mục</span>
+                            </button>
                         </div>
                     </div>
 
                     <!-- Products Grid -->
-                    <div class="row g-2 row-cols-2 row-cols-md-3 row-cols-xl-4" id="posProductsGrid">
+                    <div class="row g-3 row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-xl-4" id="posProductsGrid">
                         <div th:each="p : ${products}" 
                              class="col pos-product-item" 
                              th:data-category="${p.category != null ? p.category.categoryId : 0}"
                              th:data-name="${p.productName.toLowerCase()}">
-                            <div class="pos-product-card p-2 text-center h-100 d-flex flex-column justify-content-between"
+                            <div class="pos-product-card p-2 text-center add-to-ticket-btn"
                                  th:data-id="${p.productId}"
                                  th:data-name="${p.productName}"
                                  th:data-price="${p.price != null ? p.price : 0}">
-                                <div>
+                                
+                                <div class="pos-product-img-wrapper rounded-3 mb-2">
                                     <img th:src="${p.image != null and #strings.startsWith(p.image, 'http') ? p.image : '/images/' + p.image}" 
-                                         class="pos-product-img rounded mb-2" 
+                                         class="pos-product-img" 
                                          alt="Ảnh sản phẩm">
-                                    <div class="fw-bold text-dark small text-truncate" th:text="${p.productName}">Món uống</div>
                                 </div>
-                                <div class="mt-2 pt-1 border-top">
-                                    <div class="fw-bold text-danger small" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">39,000 đ</div>
-                                    <button type="button" class="btn btn-primary btn-sm w-100 mt-1 py-0 px-2 small add-to-ticket-btn">
-                                        <i class="fa-solid fa-plus me-1"></i> Thêm
-                                    </button>
+
+                                <div class="px-1 flex-grow-1 d-flex flex-column justify-content-between">
+                                    <div class="pos-product-title mb-1" th:text="${p.productName}">Món uống</div>
+                                    <div class="pos-product-price mb-2" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">39,000 đ</div>
                                 </div>
+
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold py-1">
+                                    <i class="fa-solid fa-plus me-1"></i> Thêm món
+                                </button>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
 
         <!-- RIGHT COLUMN: Order Ticket & Checkout (35% width) -->
         <div class="col-lg-5 col-xl-4">
-            <div class="card pos-ticket-card shadow-sm">
-                <div class="card-header text-white d-flex justify-content-between align-items-center">
-                    <span><i class="fa-solid fa-receipt me-1"></i> Phiếu Đặt Món POS</span>
-                    <span class="badge bg-light text-dark" id="itemCountBadge">0 món</span>
+            <div class="card pos-ticket-card">
+                
+                <!-- Ticket Header -->
+                <div class="pos-ticket-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-receipt text-warning fs-5"></i>
+                        <span class="fw-bold fs-6 font-heading">PHIẾU ĐẶT MÓN POS</span>
+                    </div>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fw-bold" id="itemCountBadge">0 món</span>
                 </div>
-                <div class="card-body">
+
+                <div class="card-body p-3">
                     <form th:action="@{/orders/pos-checkout}" method="post" id="posCheckoutForm">
                         
                         <!-- Customer & Table Selection -->
-                        <div class="row g-2 mb-2">
+                        <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label small fw-bold mb-1">Khách hàng</label>
-                                <select name="customerId" class="form-select form-select-sm">
+                                <label class="form-label small fw-bold mb-1 text-muted">
+                                    <i class="fa-solid fa-user-tag me-1 text-primary"></i> Khách hàng
+                                </label>
+                                <select name="customerId" class="form-select form-select-sm rounded-3">
                                     <option value="">-- Khách lẻ --</option>
                                     <option th:each="c : ${customers}" th:value="${c.customerId}" th:text="${c.fullName}">Khách A</option>
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label class="form-label small fw-bold mb-1">Vị trí bàn</label>
-                                <select name="tableId" class="form-select form-select-sm">
-                                    <option value="">-- Mang đi / Mang về --</option>
+                                <label class="form-label small fw-bold mb-1 text-muted">
+                                    <i class="fa-solid fa-chair me-1 text-primary"></i> Vị trí bàn
+                                </label>
+                                <select name="tableId" class="form-select form-select-sm rounded-3">
+                                    <option value="">-- Mang đi / Về --</option>
                                     <option th:each="t : ${tables}" th:value="${t.tableId}" th:text="${t.tableNumber}">Bàn 01</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Ticket Items List -->
-                        <div class="border rounded bg-light p-2 mb-3" style="min-height: 180px; max-height: 260px; overflow-y: auto;" id="ticketItemsContainer">
-                            <div class="text-center text-muted py-4 small opacity-75" id="emptyTicketPlaceholder">
-                                <i class="fa-solid fa-cart-flatbed fa-2x mb-2"></i><br>
-                                Chưa có món nào được chọn.<br>Click vào sản phẩm bên trái để thêm vào đơn.
+                        <!-- Ticket Items Scrollable List Container -->
+                        <div class="border rounded-3 bg-light p-2 mb-3" style="min-height: 220px; max-height: 320px; overflow-y: auto;" id="ticketItemsContainer">
+                            <div class="text-center text-muted py-5 small" id="emptyTicketPlaceholder">
+                                <i class="fa-solid fa-basket-shopping fa-3x mb-3 text-secondary opacity-50"></i><br>
+                                <span class="fw-semibold text-dark">Chưa chọn món nào</span><br>
+                                Click chọn sản phẩm từ danh mục bên trái
                             </div>
                             <!-- Dynamic items populated by JS -->
                         </div>
 
                         <!-- Voucher & Staff Selection -->
-                        <div class="row g-2 mb-2">
+                        <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label small fw-bold mb-1">Mã giảm giá (Voucher)</label>
-                                <select name="voucherId" id="voucherSelect" class="form-select form-select-sm">
-                                    <option value="" data-discount="0">-- Không dùng --</option>
+                                <label class="form-label small fw-bold mb-1 text-muted">
+                                    <i class="fa-solid fa-ticket me-1 text-warning"></i> Voucher giảm giá
+                                </label>
+                                <select name="voucherId" id="voucherSelect" class="form-select form-select-sm rounded-3">
+                                    <option value="" data-discount="0">-- Không áp dụng --</option>
                                     <option th:each="v : ${vouchers}" 
                                             th:value="${v.voucherId}" 
                                             th:data-discount="${v.discountPercent}"
@@ -179,8 +331,10 @@
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label class="form-label small fw-bold mb-1">Thu ngân phục vụ</label>
-                                <select name="userId" class="form-select form-select-sm" required>
+                                <label class="form-label small fw-bold mb-1 text-muted">
+                                    <i class="fa-solid fa-user-gear me-1 text-primary"></i> Thu ngân lập đơn
+                                </label>
+                                <select name="userId" class="form-select form-select-sm rounded-3" required>
                                     <option th:each="u : ${users}" 
                                             th:value="${u.userId}" 
                                             th:text="${u.fullName}"
@@ -189,41 +343,41 @@
                             </div>
                         </div>
 
-                        <!-- Payment Method Toggle -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold mb-1">Hình thức thanh toán</label>
+                        <!-- Payment Method Segment Switcher -->
+                        <div class="mb-3 payment-method-toggle">
+                            <label class="form-label small fw-bold mb-1 text-muted">Hình thức thanh toán</label>
                             <div class="btn-group w-100" role="group">
                                 <input type="radio" class="btn-check" name="paymentMethod" id="payCash" value="CASH" checked>
-                                <label class="btn btn-outline-success btn-sm" for="payCash">
-                                    <i class="fa-solid fa-money-bill-wave me-1"></i> Tiền mặt
+                                <label class="btn btn-outline-secondary btn-sm py-2 rounded-start-3 fw-bold" for="payCash">
+                                    <i class="fa-solid fa-money-bill-wave me-1 text-success"></i> Tiền mặt
                                 </label>
 
                                 <input type="radio" class="btn-check" name="paymentMethod" id="payVietQr" value="BANK_TRANSFER">
-                                <label class="btn btn-outline-primary btn-sm" for="payVietQr">
-                                    <i class="fa-solid fa-qrcode me-1"></i> Chuyển khoản VietQR
+                                <label class="btn btn-outline-secondary btn-sm py-2 rounded-end-3 fw-bold" for="payVietQr">
+                                    <i class="fa-solid fa-qrcode me-1 text-primary"></i> Chuyển khoản VietQR
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Summary Breakdown -->
-                        <div class="border-top pt-2 mb-3">
+                        <!-- Summary Financial Breakdown -->
+                        <div class="bg-light p-3 rounded-3 mb-3 border">
                             <div class="d-flex justify-content-between small text-muted mb-1">
-                                <span>Tạm tính:</span>
-                                <span id="rawTotalText">0 đ</span>
+                                <span>Tạm tính món:</span>
+                                <span class="fw-bold text-dark" id="rawTotalText">0 đ</span>
                             </div>
                             <div class="d-flex justify-content-between small text-success mb-1" id="discountRow" style="display: none !important;">
-                                <span>Giảm giá Voucher:</span>
-                                <span id="discountText">-0 đ</span>
+                                <span>Khuyến mãi Voucher:</span>
+                                <span class="fw-bold" id="discountText">-0 đ</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center fs-5 fw-bold text-dark pt-1 border-top">
-                                <span>TỔNG CỘNG:</span>
-                                <span class="text-danger fs-4" id="finalTotalText">0 đ</span>
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-2">
+                                <span class="fw-bold text-dark fs-6">TỔNG THANH TOÁN:</span>
+                                <span class="fw-bold text-danger fs-3 font-heading" id="finalTotalText">0 đ</span>
                             </div>
                         </div>
 
                         <!-- 1-Click Submit Button -->
-                        <button type="submit" class="btn btn-primary w-100 py-2.5 fs-6 fw-bold shadow-sm" id="submitOrderBtn">
-                            <i class="fa-solid fa-print me-1"></i> Thanh Toán & In Hóa Đơn POS
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 fs-6 fw-bold shadow rounded-3 text-white" id="submitOrderBtn">
+                            <i class="fa-solid fa-print me-2"></i> THANH TOÁN & IN HÓA ĐƠN POS
                         </button>
 
                     </form>
@@ -244,12 +398,11 @@
         }
 
         // Add Product to Ticket
-        document.querySelectorAll(".add-to-ticket-btn, .pos-product-card").forEach(elem => {
-            elem.addEventListener("click", function(e) {
-                const card = this.closest(".pos-product-card");
-                const id = card.dataset.id;
-                const name = card.dataset.name;
-                const price = parseFloat(card.dataset.price) || 0;
+        document.querySelectorAll(".add-to-ticket-btn").forEach(card => {
+            card.addEventListener("click", function(e) {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = parseFloat(this.dataset.price) || 0;
 
                 if (ticketItems[id]) {
                     ticketItems[id].qty += 1;
@@ -262,14 +415,14 @@
 
         function renderTicket() {
             const container = document.getElementById("ticketItemsContainer");
-            const placeholder = document.getElementById("emptyTicketPlaceholder");
             const keys = Object.keys(ticketItems);
 
             if (keys.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center text-muted py-4 small opacity-75">
-                        <i class="fa-solid fa-cart-flatbed fa-2x mb-2"></i><br>
-                        Chưa có món nào được chọn.<br>Click vào sản phẩm bên trái để thêm vào đơn.
+                    <div class="text-center text-muted py-5 small" id="emptyTicketPlaceholder">
+                        <i class="fa-solid fa-basket-shopping fa-3x mb-3 text-secondary opacity-50"></i><br>
+                        <span class="fw-semibold text-dark">Chưa chọn món nào</span><br>
+                        Click chọn sản phẩm từ danh mục bên trái
                     </div>`;
                 updateTotals(0);
                 document.getElementById("itemCountBadge").innerText = "0 món";
@@ -287,25 +440,30 @@
                 totalCount += item.qty;
 
                 html += `
-                    <div class="ticket-item-row d-flex justify-content-between align-items-center">
+                    <div class="ticket-item-row d-flex align-items-center justify-content-between gap-2">
                         <input type="hidden" name="productIds" value="${item.id}">
                         <input type="hidden" name="quantities" value="${item.qty}">
                         <input type="hidden" name="notes" value="${item.note}">
                         
-                        <div style="max-width: 140px;">
-                            <div class="fw-bold text-dark small text-truncate">${item.name}</div>
-                            <div class="text-muted text-nowrap" style="font-size: 0.75rem;">${formatVnd(item.price)}</div>
+                        <!-- Left: Item Name & Unit Price -->
+                        <div class="flex-grow-1" style="min-width: 0;">
+                            <div class="ticket-item-title text-truncate">${item.name}</div>
+                            <div class="ticket-item-unit-price">${formatVnd(item.price)}</div>
                         </div>
 
-                        <div class="d-flex align-items-center gap-1">
+                        <!-- Center: Qty Buttons -->
+                        <div class="d-flex align-items-center gap-1 flex-shrink-0">
                             <button type="button" class="btn btn-outline-secondary qty-mini-btn decrease-qty" data-id="${item.id}">-</button>
-                            <span class="fw-bold px-1 small">${item.qty}</span>
+                            <span class="fw-bold px-1 small text-dark" style="min-width: 20px; text-align: center;">${item.qty}</span>
                             <button type="button" class="btn btn-outline-secondary qty-mini-btn increase-qty" data-id="${item.id}">+</button>
                         </div>
 
-                        <div class="text-end">
+                        <!-- Right: Subtotal & Delete -->
+                        <div class="text-end flex-shrink-0 ms-1" style="min-width: 75px;">
                             <div class="fw-bold text-danger small">${formatVnd(subtotal)}</div>
-                            <button type="button" class="btn btn-link text-danger p-0 border-0 remove-item" data-id="${item.id}" style="font-size: 0.75rem;">Xóa</button>
+                            <button type="button" class="btn btn-link text-danger p-0 border-0 remove-item" data-id="${item.id}" style="font-size: 0.78rem;">
+                                <i class="fa-solid fa-trash-can"></i> Xóa
+                            </button>
                         </div>
                     </div>`;
             });
@@ -380,9 +538,9 @@
         });
 
         // Category Filter Tabs
-        document.querySelectorAll(".category-filter-btn").forEach(btn => {
+        document.querySelectorAll(".category-pill-btn").forEach(btn => {
             btn.addEventListener("click", function() {
-                document.querySelectorAll(".category-filter-btn").forEach(b => b.classList.remove("active"));
+                document.querySelectorAll(".category-pill-btn").forEach(b => b.classList.remove("active"));
                 this.classList.add("active");
 
                 const catId = this.dataset.category;
