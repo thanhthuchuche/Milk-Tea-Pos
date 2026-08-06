@@ -11,6 +11,14 @@
 
 ## Chạy ứng dụng trên mỗi máy Windows
 
+Cách nhanh nhất để tạo database, bảng và dữ liệu mẫu trên một máy MySQL mới:
+
+```powershell
+.\scripts\setup-database.ps1 -FreshInstall
+```
+
+Script sẽ hỏi tài khoản MySQL, sau đó tự tạo/cập nhật schema và chạy DatabaseSeeder. Chỉ dùng `-FreshInstall` cho database mới hoặc khi đã xác nhận muốn tạo lại dữ liệu mẫu.
+
 Mở PowerShell tại thư mục dự án và thay `<MAT_KHAU_DB>` bằng mật khẩu của user `milktea_app`:
 
 ```powershell
