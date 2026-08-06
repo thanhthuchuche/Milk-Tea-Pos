@@ -1,78 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Đơn hàng của tôi</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Đơn hàng của tôi - Cô Đào Quán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div th:replace="fragments/navbar :: navbar"></div>
+<main class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h2 class="mb-1"><i class="fa-solid fa-receipt text-primary me-2"></i>Đơn hàng của tôi</h2>
+            <p class="text-muted mb-0">Theo dõi trạng thái và đặt lại món yêu thích từ đơn cũ.</p>
+        </div>
+        <a href="/customer/menu" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i> Đặt món mới</a>
+    </div>
 
-<div class="container mt-4">
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-7"><input id="orderSearch" class="form-control" placeholder="Tìm theo mã đơn hoặc trạng thái..."></div>
+                <div class="col-md-3"><select id="orderStatus" class="form-select"><option value="ALL">Tất cả trạng thái</option><option value="PENDING">Đang xử lý</option><option value="COMPLETED">Hoàn tất</option><option value="CANCELLED">Đã hủy</option></select></div>
+                <div class="col-md-2"><button id="clearOrderFilters" class="btn btn-secondary w-100" type="button"><i class="fa-solid fa-rotate-left"></i> Xóa lọc</button></div>
+            </div>
+        </div>
+    </div>
 
-    <h2 class="mb-4">
-        Đơn hàng của tôi
-    </h2>
+    <div class="card shadow-sm">
+        <div class="card-header"><i class="fa-solid fa-clock-rotate-left me-2"></i>Lịch sử đặt món</div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr><th>Mã đơn</th><th>Ngày đặt</th><th>Trạng thái</th><th>Tổng tiền</th><th class="text-center">Thao tác</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}" class="customer-order-row" th:data-order-id="${order.orderId}" th:data-status="${order.status}">
+                        <td class="fw-bold" th:text="${'#' + order.orderId}">#1</td>
+                        <td th:text="${order.orderDate != null ? #dates.format(order.orderDate, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
+                        <td>
+                            <span class="badge bg-warning" th:if="${order.status == 'PENDING'}">ĐANG XỬ LÝ</span>
+                            <span class="badge bg-success" th:if="${order.status == 'COMPLETED'}">HOÀN TẤT</span>
+                            <span class="badge bg-danger" th:if="${order.status == 'CANCELLED'}">ĐÃ HỦY</span>
+                            <span class="badge bg-secondary" th:if="${order.status != 'PENDING' and order.status != 'COMPLETED' and order.status != 'CANCELLED'}" th:text="${order.status}">KHÁC</span>
+                        </td>
+                        <td class="fw-bold text-danger" th:text="${order.totalAmount != null ? #numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}">0 đ</td>
+                        <td class="text-center">
+                            <a th:href="@{/my-orders/{id}(id=${order.orderId})}" class="btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i> Xem</a>
+                            <a th:if="${order.status != 'CART'}" th:href="@{/customer-order/reorder/{id}(id=${order.orderId})}" class="btn btn-success btn-sm"><i class="fa-solid fa-rotate-right"></i> Mua lại</a>
+                            <a th:href="@{/customer-order/delete/{id}(id=${order.orderId})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    <tr th:if="${orders == null or orders.isEmpty()}"><td colspan="5" class="text-center text-muted py-5">Bạn chưa có đơn hàng nào.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="emptyOrderFilter" class="text-center text-muted py-4 d-none">Không tìm thấy đơn phù hợp.</div>
+        </div>
+    </div>
+</main>
 
-    <table class="table table-bordered table-hover">
+<script>
+    const orderSearch = document.getElementById('orderSearch');
+    const orderStatus = document.getElementById('orderStatus');
+    const orderRows = Array.from(document.querySelectorAll('.customer-order-row'));
+    const emptyOrderFilter = document.getElementById('emptyOrderFilter');
 
-        <thead class="table-dark">
+    function filterOrders() {
+        const keyword = (orderSearch.value || '').toLowerCase().trim();
+        const status = orderStatus.value;
+        let visible = 0;
+        orderRows.forEach(row => {
+            const matchesKeyword = row.dataset.orderId.toLowerCase().includes(keyword) || row.dataset.status.toLowerCase().includes(keyword);
+            const matchesStatus = status === 'ALL' || row.dataset.status === status;
+            row.style.display = matchesKeyword && matchesStatus ? '' : 'none';
+            if (matchesKeyword && matchesStatus) visible++;
+        });
+        emptyOrderFilter.classList.toggle('d-none', visible !== 0 || orderRows.length === 0);
+    }
 
-        <tr>
-
-            <th>Mã đơn</th>
-
-            <th>Ngày đặt</th>
-
-            <th>Trạng thái</th>
-
-            <th>Tổng tiền</th>
-
-            <th>Chi tiết</th>
-
-        </tr>
-
-        </thead>
-
-        <tbody>
-
-        <tr th:each="order : ${orders}">
-
-            <td th:text="${order.orderId}"></td>
-
-            <td th:text="${order.orderDate}"></td>
-
-            <td th:text="${order.status}"></td>
-
-            <td th:text="${order.totalAmount}"></td>
-
-            <td>
-
-                <a class="btn btn-sm"
-                   th:href="@{/my-orders/{id}(id=${order.orderId})}"
-                   style="background-color:#8B5E3C; color:#fff; border-color:#8B5E3C;">
-                    Xem
-                </a>
-                <a th:href="@{/customer-order/delete/{id}(id=${order.orderId})}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')">
-                    Xóa
-                </a>
-
-
-            </td>
-
-        </tr>
-
-        </tbody>
-
-    </table>
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    orderSearch.addEventListener('input', filterOrders);
+    orderStatus.addEventListener('change', filterOrders);
+    document.getElementById('clearOrderFilters').addEventListener('click', () => {
+        orderSearch.value = '';
+        orderStatus.value = 'ALL';
+        filterOrders();
+    });
+</script>
 </body>
 </html>

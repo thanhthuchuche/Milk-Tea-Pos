@@ -62,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/customer/menu",
                                 "/customer-menu/**",
+                                "/customer/dashboard",
+                                "/customer/account/**",
                                 "/customer-cart/**",
                                 "/customer-order/**",
                                 "/customer/orders",

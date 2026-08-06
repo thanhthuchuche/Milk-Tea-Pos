@@ -17,6 +17,9 @@ public interface CustomerOrderRepository
     findByCustomerCustomerId(Integer customerId);
 
     List<CustomerOrder>
+    findByCustomerCustomerIdOrderByOrderDateDesc(Integer customerId);
+
+    List<CustomerOrder>
     findByStatusNot(String status);
 
 }

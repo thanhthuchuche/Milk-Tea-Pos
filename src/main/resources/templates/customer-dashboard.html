@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trung tâm khách hàng - Cô Đào Quán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <div class="text-muted small fw-semibold text-uppercase">Không gian riêng của bạn</div>
+            <h2 class="mb-1"><i class="fa-solid fa-chart-line text-primary me-2"></i>Trung tâm khách hàng</h2>
+            <p class="text-muted mb-0">Xin chào <strong th:text="${customer.fullName}">Khách hàng</strong>, xem nhanh hoạt động và ưu đãi của bạn.</p>
+        </div>
+        <a href="/customer/menu" class="btn btn-primary">
+            <i class="fa-solid fa-mug-hot me-1"></i> Đặt món ngay
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Điểm thành viên</div>
+                    <div class="fs-2 fw-bold text-warning" th:text="${customer.point != null ? customer.point : 0}">0</div>
+                    <div class="small text-muted">1 điểm cho mỗi 10.000đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Món trong giỏ</div>
+                    <div class="fs-2 fw-bold text-primary" th:text="${cartItemCount}">0</div>
+                    <a href="/customer-cart" class="small">Mở giỏ hàng <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Đơn đang xử lý</div>
+                    <div class="fs-2 fw-bold text-info" th:text="${pendingOrders}">0</div>
+                    <a href="/customer/orders" class="small">Theo dõi đơn <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Tổng đã chi</div>
+                    <div class="fs-4 fw-bold text-danger" th:text="${#numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT') + ' đ'}">0 đ</div>
+                    <div class="small text-muted" th:text="${completedOrders + ' đơn hoàn tất'}">0 đơn hoàn tất</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-clock-rotate-left me-2"></i>Đơn gần đây</span>
+                    <a href="/customer/orders" class="btn btn-sm btn-light">Xem tất cả</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                            <tr><th>Mã đơn</th><th>Ngày đặt</th><th>Trạng thái</th><th class="text-end">Tổng tiền</th><th></th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order : ${recentOrders}">
+                                <td class="fw-bold" th:text="${'#' + order.orderId}">#1</td>
+                                <td th:text="${order.orderDate != null ? #dates.format(order.orderDate, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
+                                <td>
+                                    <span class="badge bg-warning" th:if="${order.status == 'PENDING'}">ĐANG XỬ LÝ</span>
+                                    <span class="badge bg-success" th:if="${order.status == 'COMPLETED'}">HOÀN TẤT</span>
+                                    <span class="badge bg-danger" th:if="${order.status == 'CANCELLED'}">ĐÃ HỦY</span>
+                                </td>
+                                <td class="text-end fw-bold text-danger" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ'}">0 đ</td>
+                                <td><a class="btn btn-sm btn-outline-primary" th:href="@{/my-orders/{id}(id=${order.orderId})}"><i class="fa-solid fa-eye"></i></a></td>
+                            </tr>
+                            <tr th:if="${recentOrders == null or recentOrders.isEmpty()}"><td colspan="5" class="text-center text-muted py-4">Bạn chưa có đơn hàng nào.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header"><i class="fa-solid fa-ticket text-warning me-2"></i>Ưu đãi đang có</div>
+                <div class="card-body">
+                    <div th:each="voucher : ${vouchers}" class="border rounded-3 p-3 mb-2 bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong class="text-primary" th:text="${voucher.voucherCode}">CODAOQUAN20</strong>
+                            <span class="badge bg-danger" th:text="${'-' + voucher.discountPercent + '%'}">-20%</span>
+                        </div>
+                        <div class="small text-muted mt-1">Nhập mã khi đặt món tại quầy hoặc liên hệ nhân viên.</div>
+                    </div>
+                    <div th:if="${vouchers == null or vouchers.isEmpty()}" class="text-muted small">Hiện chưa có ưu đãi khả dụng.</div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header"><i class="fa-solid fa-user me-2"></i>Thông tin tài khoản</div>
+                <div class="card-body">
+                    <div class="mb-2"><span class="text-muted small d-block">Họ tên</span><strong th:text="${customer.fullName}">Khách hàng</strong></div>
+                    <div class="mb-2"><span class="text-muted small d-block">Điện thoại</span><span th:text="${customer.phone}">0900000000</span></div>
+                    <div class="mb-3"><span class="text-muted small d-block">Email</span><span th:text="${customer.email}">customer@example.com</span></div>
+                    <a href="/customer/account" class="btn btn-outline-primary w-100"><i class="fa-solid fa-user-pen me-1"></i> Cập nhật thông tin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -39,6 +39,11 @@
         </a>
     </div>
 
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i><span th:text="${successMessage}">Đã cập nhật giỏ hàng.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
     <!-- Active Cart Items Container -->
     <div th:if="${order != null and details != null and !details.isEmpty()}" class="row g-4">
         <!-- Cart Items List (Left Column) -->

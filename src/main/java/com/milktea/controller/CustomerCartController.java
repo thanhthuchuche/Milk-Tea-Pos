@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -72,10 +73,7 @@ public class CustomerCartController {
             @PathVariable Integer customerId,
             @PathVariable Integer productId) {
 
-        Customer customer = customerRepository.findById(customerId).orElse(null);
-        if (customer == null) {
-            customer = getCurrentCustomer();
-        }
+        Customer customer = getCurrentCustomer();
 
         Product product = productRepository.findById(productId).orElse(null);
         if (product == null) {
@@ -198,7 +196,11 @@ public class CustomerCartController {
     public String myOrders(Model model) {
         Customer customer = getCurrentCustomer();
 
-        List<CustomerOrder> orders = customerOrderRepository.findByCustomerCustomerId(customer.getCustomerId());
+        List<CustomerOrder> orders = customerOrderRepository
+                .findByCustomerCustomerIdOrderByOrderDateDesc(customer.getCustomerId())
+                .stream()
+                .filter(order -> !"CART".equals(order.getStatus()))
+                .toList();
         model.addAttribute("orders", orders);
 
         return "my-orders";
@@ -207,7 +209,7 @@ public class CustomerCartController {
     @GetMapping("/my-orders/{id}")
     public String orderDetail(@PathVariable Integer id, Model model) {
         CustomerOrder order = customerOrderRepository.findById(id).orElse(null);
-        if (order == null) {
+        if (order == null || !belongsToCurrentCustomer(order)) {
             return "redirect:/customer/orders";
         }
 
@@ -221,12 +223,76 @@ public class CustomerCartController {
     @GetMapping("/customer-order/delete/{id}")
     public String deleteOrder(@PathVariable Integer id) {
         CustomerOrder order = customerOrderRepository.findById(id).orElse(null);
-        if (order != null) {
+        if (order != null && belongsToCurrentCustomer(order)) {
             List<CustomerOrderDetail> details = customerOrderDetailRepository.findByCustomerOrderOrderId(id);
             customerOrderDetailRepository.deleteAll(details);
             customerOrderRepository.delete(order);
         }
 
         return "redirect:/customer/orders";
+    }
+
+    @GetMapping("/customer-order/reorder/{id}")
+    public String reorder(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        CustomerOrder sourceOrder = customerOrderRepository.findById(id).orElse(null);
+        if (sourceOrder == null || !belongsToCurrentCustomer(sourceOrder)) {
+            return "redirect:/customer/orders";
+        }
+
+        Customer customer = getCurrentCustomer();
+        CustomerOrder cart = getOrCreateCart(customer);
+        List<CustomerOrderDetail> cartDetails = customerOrderDetailRepository
+                .findByCustomerOrderOrderId(cart.getOrderId());
+
+        for (CustomerOrderDetail sourceDetail : customerOrderDetailRepository
+                .findByCustomerOrderOrderId(id)) {
+            if (sourceDetail.getProduct() == null) {
+                continue;
+            }
+
+            CustomerOrderDetail targetDetail = cartDetails.stream()
+                    .filter(detail -> detail.getProduct() != null
+                            && detail.getProduct().getProductId().equals(sourceDetail.getProduct().getProductId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (targetDetail == null) {
+                targetDetail = new CustomerOrderDetail();
+                targetDetail.setCustomerOrder(cart);
+                targetDetail.setProduct(sourceDetail.getProduct());
+                targetDetail.setPrice(sourceDetail.getPrice());
+                targetDetail.setQuantity(sourceDetail.getQuantity());
+            } else {
+                targetDetail.setQuantity(targetDetail.getQuantity() + sourceDetail.getQuantity());
+            }
+            targetDetail.setSubtotal(targetDetail.getQuantity() * targetDetail.getPrice());
+            customerOrderDetailRepository.save(targetDetail);
+            cartDetails.add(targetDetail);
+        }
+
+        recalculateCartTotal(cart);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã thêm các món từ đơn cũ vào giỏ hàng.");
+        return "redirect:/customer-cart";
+    }
+
+    private CustomerOrder getOrCreateCart(Customer customer) {
+        List<CustomerOrder> carts = customerOrderRepository
+                .findByCustomerCustomerIdAndStatus(customer.getCustomerId(), "CART");
+        if (!carts.isEmpty()) {
+            return carts.get(0);
+        }
+
+        CustomerOrder cart = new CustomerOrder();
+        cart.setCustomer(customer);
+        cart.setOrderDate(new Date());
+        cart.setStatus("CART");
+        cart.setTotalAmount(0.0);
+        return customerOrderRepository.save(cart);
+    }
+
+    private boolean belongsToCurrentCustomer(CustomerOrder order) {
+        Customer current = getCurrentCustomer();
+        return order.getCustomer() != null
+                && current.getCustomerId().equals(order.getCustomer().getCustomerId());
     }
 }
