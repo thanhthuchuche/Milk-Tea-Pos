@@ -85,6 +85,11 @@
             <div>
                 <span class="text-muted small text-uppercase fw-bold">Tổng số tiền thanh toán</span>
                 <h3 class="text-danger fw-bold mb-0 mt-1" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h3>
+                <div th:if="${order.voucher != null}" class="small text-success mt-1">
+                    <i class="fa-solid fa-ticket me-1"></i>Voucher:
+                    <strong th:text="${order.voucher.voucherCode}">VOUCHER</strong>
+                    — giảm <span th:text="${order.voucher.discountPercent + '%'}">10%</span>
+                </div>
             </div>
             
             <div th:if="${order.status == 'PENDING'}" class="d-flex gap-2">

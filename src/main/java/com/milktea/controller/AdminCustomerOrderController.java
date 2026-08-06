@@ -84,6 +84,7 @@ public class AdminCustomerOrderController {
             orders.setOrderDate(new Date());
             orders.setStatus("PAID");
             orders.setTotalAmount(customerOrder.getTotalAmount());
+            orders.setVoucher(customerOrder.getVoucher());
             orders = ordersRepository.save(orders);
 
             // 3. Copy CustomerOrderDetail list to standard OrderDetail list and perform stock subtraction

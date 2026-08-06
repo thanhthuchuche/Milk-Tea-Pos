@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 
 import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
 
 @Controller
 public class CustomerCartController {
@@ -21,17 +22,23 @@ public class CustomerCartController {
     private final ProductRepository productRepository;
     private final CustomerOrderRepository customerOrderRepository;
     private final CustomerOrderDetailRepository customerOrderDetailRepository;
+    private final VoucherRepository voucherRepository;
+    private final CustomerVoucherRepository customerVoucherRepository;
 
     public CustomerCartController(
             CustomerRepository customerRepository,
             ProductRepository productRepository,
             CustomerOrderRepository customerOrderRepository,
-            CustomerOrderDetailRepository customerOrderDetailRepository) {
+            CustomerOrderDetailRepository customerOrderDetailRepository,
+            VoucherRepository voucherRepository,
+            CustomerVoucherRepository customerVoucherRepository) {
 
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderDetailRepository = customerOrderDetailRepository;
+        this.voucherRepository = voucherRepository;
+        this.customerVoucherRepository = customerVoucherRepository;
     }
 
     private Customer getCurrentCustomer() {
@@ -60,11 +67,17 @@ public class CustomerCartController {
     private void recalculateCartTotal(CustomerOrder order) {
         if (order == null) return;
         List<CustomerOrderDetail> details = customerOrderDetailRepository.findByCustomerOrderOrderId(order.getOrderId());
-        double total = 0.0;
+        double originalAmount = 0.0;
         for (CustomerOrderDetail d : details) {
-            total += d.getSubtotal();
+            originalAmount += d.getSubtotal();
         }
-        order.setTotalAmount(total);
+        double discountAmount = 0.0;
+        if (order.getVoucher() != null && order.getVoucher().getDiscountPercent() != null) {
+            discountAmount = originalAmount * order.getVoucher().getDiscountPercent() / 100.0;
+        }
+        order.setOriginalAmount(originalAmount);
+        order.setDiscountAmount(discountAmount);
+        order.setTotalAmount(Math.max(0.0, originalAmount - discountAmount));
         customerOrderRepository.save(order);
     }
 
@@ -136,9 +149,56 @@ public class CustomerCartController {
             List<CustomerOrderDetail> details = customerOrderDetailRepository.findByCustomerOrderOrderId(order.getOrderId());
             model.addAttribute("order", order);
             model.addAttribute("details", details);
+            model.addAttribute("appliedVoucher", order.getVoucher());
+            model.addAttribute("originalAmount", order.getOriginalAmount());
+            model.addAttribute("discountAmount", order.getDiscountAmount());
         }
 
         return "customer-cart";
+    }
+
+    @PostMapping("/customer-cart/apply-voucher")
+    public String applyVoucher(@RequestParam String voucherCode, RedirectAttributes redirectAttributes) {
+        Customer customer = getCurrentCustomer();
+        CustomerOrder cart = getCart(customer);
+        if (cart == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Giỏ hàng đang trống.");
+            return "redirect:/customer-cart";
+        }
+
+        String normalizedCode = voucherCode == null ? "" : voucherCode.trim();
+        Voucher voucher = voucherRepository.findAll().stream()
+                .filter(item -> item.getVoucherCode() != null && item.getVoucherCode().equalsIgnoreCase(normalizedCode))
+                .findFirst().orElse(null);
+        LocalDate today = LocalDate.now();
+        boolean active = voucher != null
+                && (voucher.getStartDate() == null || !today.isBefore(voucher.getStartDate()))
+                && (voucher.getEndDate() == null || !today.isAfter(voucher.getEndDate()));
+        boolean owned = voucher != null && customerVoucherRepository
+                .existsByCustomerCustomerIdAndVoucherVoucherCodeIgnoreCase(customer.getCustomerId(), normalizedCode);
+
+        if (!active) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Mã voucher không tồn tại hoặc đã hết hạn.");
+        } else if (!owned) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Mã này chưa được đổi trong tài khoản của bạn.");
+        } else {
+            cart.setVoucher(voucher);
+            recalculateCartTotal(cart);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã áp dụng mã " + voucher.getVoucherCode() + " giảm " + voucher.getDiscountPercent() + "%.");
+        }
+        return "redirect:/customer-cart";
+    }
+
+    @GetMapping("/customer-cart/remove-voucher")
+    public String removeVoucher(RedirectAttributes redirectAttributes) {
+        Customer customer = getCurrentCustomer();
+        CustomerOrder cart = getCart(customer);
+        if (cart != null) {
+            cart.setVoucher(null);
+            recalculateCartTotal(cart);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã bỏ mã voucher khỏi giỏ hàng.");
+        }
+        return "redirect:/customer-cart";
     }
 
     @GetMapping("/customer-cart/increase/{id}")
@@ -190,6 +250,12 @@ public class CustomerCartController {
         }
 
         return "redirect:/customer/orders";
+    }
+
+    private CustomerOrder getCart(Customer customer) {
+        List<CustomerOrder> carts = customerOrderRepository
+                .findByCustomerCustomerIdAndStatus(customer.getCustomerId(), "CART");
+        return carts.isEmpty() ? null : carts.get(0);
     }
 
     @GetMapping("/customer/orders")

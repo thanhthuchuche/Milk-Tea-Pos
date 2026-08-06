@@ -77,6 +77,12 @@
 
     </h3>
 
+    <div th:if="${order.voucher != null}" class="alert alert-success mt-3">
+        <i class="fa-solid fa-ticket me-2"></i>Voucher đã áp dụng:
+        <strong th:text="${order.voucher.voucherCode}">VOUCHER</strong>
+        — giảm <span th:text="${order.voucher.discountPercent + '%'}">10%</span>
+    </div>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

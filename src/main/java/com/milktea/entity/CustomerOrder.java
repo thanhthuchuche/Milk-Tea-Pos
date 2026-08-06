@@ -21,6 +21,14 @@ public class CustomerOrder {
 
     private Double totalAmount;
 
+    private Double originalAmount;
+
+    private Double discountAmount;
+
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
     public CustomerOrder() {
     }
 
@@ -62,5 +70,29 @@ public class CustomerOrder {
 
     public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Double getOriginalAmount() {
+        return originalAmount;
+    }
+
+    public void setOriginalAmount(Double originalAmount) {
+        this.originalAmount = originalAmount;
+    }
+
+    public Double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
     }
 }

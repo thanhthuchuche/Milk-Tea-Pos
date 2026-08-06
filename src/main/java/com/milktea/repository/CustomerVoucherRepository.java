@@ -7,4 +7,5 @@ import java.util.List;
 public interface CustomerVoucherRepository extends JpaRepository<CustomerVoucher, Integer> {
     List<CustomerVoucher> findByCustomerCustomerIdOrderByRedeemedAtDesc(Integer customerId);
     boolean existsByCustomerCustomerIdAndVoucherVoucherId(Integer customerId, Integer voucherId);
+    boolean existsByCustomerCustomerIdAndVoucherVoucherCodeIgnoreCase(Integer customerId, String voucherCode);
 }
