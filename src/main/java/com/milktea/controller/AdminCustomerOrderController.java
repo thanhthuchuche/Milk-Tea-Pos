@@ -3,6 +3,7 @@ package com.milktea.controller;
 import com.milktea.entity.*;
 import com.milktea.repository.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,6 +75,7 @@ public class AdminCustomerOrderController {
     }
 
     @GetMapping("/approve/{id}")
+    @Transactional
     public String approveOrder(@PathVariable Integer id) {
         CustomerOrder customerOrder = customerOrderRepository.findById(id).orElse(null);
         if (customerOrder != null && "PENDING".equals(customerOrder.getStatus())) {
@@ -159,6 +161,7 @@ public class AdminCustomerOrderController {
     }
 
     @GetMapping("/cancel/{id}")
+    @Transactional
     public String cancelOrder(@PathVariable Integer id) {
         CustomerOrder customerOrder = customerOrderRepository.findById(id).orElse(null);
         if (customerOrder != null && "PENDING".equals(customerOrder.getStatus())) {

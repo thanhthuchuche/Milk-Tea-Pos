@@ -14,6 +14,7 @@ public class CustomerNotification {
     @Column(length = 1000) private String message;
     private Integer orderId;
     @Temporal(TemporalType.TIMESTAMP) private Date createdAt;
+    @Column(name = "is_read")
     private boolean read;
     public Integer getNotificationId() { return notificationId; }
     public void setNotificationId(Integer notificationId) { this.notificationId = notificationId; }
