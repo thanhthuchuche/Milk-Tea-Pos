@@ -68,6 +68,8 @@ public interface InvoiceRepository
 
     List<Invoice> findAllByOrderByInvoiceDateAsc();
 
+    Invoice findByOrders_OrderId(Integer orderId);
+
     private String formatDate(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM");
         return formatter.format(date);

@@ -4,15 +4,23 @@ import com.milktea.entity.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.List;
 
 public interface OrdersRepository extends JpaRepository<Orders, Integer> {
     long countByStatus(String status);
-    List<Orders>
-    findByCustomerFullNameContainingIgnoreCase(
-            String keyword);
+    @Query("""
+           SELECT o
+           FROM Orders o
+           LEFT JOIN o.customer c
+           LEFT JOIN o.tableCafe t
+           WHERE LOWER(COALESCE(c.fullName, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+              OR LOWER(COALESCE(t.tableNumber, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           ORDER BY o.orderId DESC
+           """)
+    List<Orders> searchOrders(@Param("keyword") String keyword);
 
     @Modifying
     @Transactional

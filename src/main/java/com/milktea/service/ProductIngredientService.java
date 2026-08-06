@@ -7,6 +7,8 @@ public interface ProductIngredientService {
 
     List<ProductIngredient> getAllProductIngredients();
 
+    List<ProductIngredient> getProductIngredientsByProductId(Integer productId);
+
     ProductIngredient getProductIngredientById(Integer id);
 
     ProductIngredient saveProductIngredient(ProductIngredient productIngredient);

@@ -460,7 +460,6 @@
         const ticketItems = {};
         
         /* Bank Info for VietQR Modal */
-        /*[[${bankSetting}]]*/
         const bankId = /*[[${bankSetting != null ? bankSetting.bankId : 'MB'}]]*/ 'MB';
         const accountNo = /*[[${bankSetting != null ? bankSetting.accountNo : '0356501309'}]]*/ '0356501309';
         const accountName = /*[[${bankSetting != null ? bankSetting.accountName : 'NGUYEN THAI THANH THU'}]]*/ 'NGUYEN THAI THANH THU';
@@ -638,33 +637,26 @@
             posForm.submit(); // Submit form and proceed to 80mm receipt print
         });
 
-        // Search Filter
-        document.getElementById("productSearchInput").addEventListener("input", function() {
-            const query = this.value.toLowerCase().trim();
-            document.querySelectorAll(".pos-product-item").forEach(item => {
-                const name = item.dataset.name;
-                if (name.includes(query)) {
-                    item.style.display = "block";
-                } else {
-                    item.style.display = "none";
-                }
-            });
-        });
+        // Search + category filters
+        let activeCategory = "ALL";
 
-        // Category Filter Tabs
+        function applyProductFilters() {
+            const query = document.getElementById("productSearchInput").value.toLowerCase().trim();
+            document.querySelectorAll(".pos-product-item").forEach(item => {
+                const matchesName = (item.dataset.name || "").includes(query);
+                const matchesCategory = activeCategory === "ALL" || item.dataset.category === activeCategory;
+                item.style.display = matchesName && matchesCategory ? "" : "none";
+            });
+        }
+
+        document.getElementById("productSearchInput").addEventListener("input", applyProductFilters);
+
         document.querySelectorAll(".category-pill-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 document.querySelectorAll(".category-pill-btn").forEach(b => b.classList.remove("active"));
                 this.classList.add("active");
-
-                const catId = this.dataset.category;
-                document.querySelectorAll(".pos-product-item").forEach(item => {
-                    if (catId === "ALL" || item.dataset.category === catId) {
-                        item.style.display = "block";
-                    } else {
-                        item.style.display = "none";
-                    }
-                });
+                activeCategory = this.dataset.category;
+                applyProductFilters();
             });
         });
     });

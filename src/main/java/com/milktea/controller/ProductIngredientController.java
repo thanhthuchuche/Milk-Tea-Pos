@@ -36,6 +36,16 @@ public class ProductIngredientController {
         return "productingredient-list";
     }
 
+    @GetMapping("/product-ingredients/{productId}")
+    public String getByProduct(@PathVariable Integer productId, Model model) {
+        model.addAttribute(
+                "productIngredients",
+                productIngredientService.getProductIngredientsByProductId(productId)
+        );
+        model.addAttribute("selectedProduct", productService.getProductById(productId));
+        return "productingredient-list";
+    }
+
     @GetMapping("/product-ingredients/add")
     public String add(Model model) {
 

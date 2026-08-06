@@ -24,6 +24,11 @@ public class ProductIngredientServiceImpl
     }
 
     @Override
+    public List<ProductIngredient> getProductIngredientsByProductId(Integer productId) {
+        return repository.findByProductProductId(productId);
+    }
+
+    @Override
     public ProductIngredient getProductIngredientById(Integer id) {
         return repository.findById(id).orElse(null);
     }
