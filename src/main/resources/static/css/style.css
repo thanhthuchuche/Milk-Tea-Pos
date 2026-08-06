@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
 
 /* Master Design Tokens - Sharp POS SaaS Theme */
 :root {
@@ -28,7 +28,7 @@
 body {
     background-color: var(--bg-cream);
     color: var(--text-dark);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 0.92rem;
@@ -37,7 +37,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
-    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 700;
     color: var(--primary-dark);
     letter-spacing: -0.025em;
@@ -76,7 +76,7 @@ a:hover {
 
 /* Page Section Titles */
 .container h2, .container-fluid h2, .container-fluid h3 {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     position: relative;
     padding-bottom: 0.35rem;
     margin-bottom: 1.5rem;
@@ -95,7 +95,7 @@ a:hover {
 }
 
 .navbar-brand {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 800;
     font-size: 1.28rem;
     letter-spacing: -0.02em;
@@ -110,7 +110,7 @@ a:hover {
 }
 
 .navbar-nav .nav-link {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 600;
     font-size: 0.92rem;
     padding: 0.5rem 0.95rem !important;
@@ -128,7 +128,7 @@ a:hover {
 
 /* Role Badges in Navbar */
 .role-badge-admin {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 800;
     letter-spacing: 0.04em;
     background: #2C1A14 !important;
@@ -140,7 +140,7 @@ a:hover {
 }
 
 .role-badge-staff {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 800;
     letter-spacing: 0.04em;
     background: #0F4C5C !important;
@@ -152,7 +152,7 @@ a:hover {
 }
 
 .role-badge-customer {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 800;
     letter-spacing: 0.04em;
     background: #5C4033 !important;
@@ -175,7 +175,7 @@ a:hover {
 }
 
 .card-header {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     background: linear-gradient(135deg, #3E2723 0%, #5C4033 100%) !important;
     color: #ffffff !important;
     font-weight: 700;
@@ -191,7 +191,7 @@ a:hover {
 
 /* Form Controls */
 .form-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 700;
     color: var(--primary-dark);
     margin-bottom: 0.35rem;
@@ -200,7 +200,7 @@ a:hover {
 }
 
 .form-control, .form-select {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     border: 1.5px solid var(--border-color);
     border-radius: var(--radius-sm);
     padding: 0.6rem 0.9rem;
@@ -237,7 +237,7 @@ a:hover {
 }
 
 .table thead th {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     background-color: #2C1A14 !important;
     color: #ffffff !important;
     font-weight: 700;
@@ -250,7 +250,7 @@ a:hover {
 }
 
 .table tbody td {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     padding: 0.95rem 1.15rem;
     vertical-align: middle;
     border-bottom: 1px solid #EBE3D7;
@@ -270,14 +270,14 @@ a:hover {
 
 /* Price & Numeric Display Typography */
 .price-display, .text-danger.fw-bold, .amount-display {
-    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 
 /* Sharp Action Buttons */
 .btn {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 700;
     font-size: 0.85rem;
     border-radius: var(--radius-sm);
@@ -371,7 +371,7 @@ a:hover {
 
 /* Sharp Status Badges */
 .badge {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     padding: 0.45em 0.8em;
     font-weight: 700;
     font-size: 0.74rem;
@@ -433,4 +433,36 @@ a:hover {
     background-color: #FFEBEE;
     color: #8C1D18;
     border-color: #FFCDD2;
+}
+
+/* Vietnamese-first typography: keep every UI control visually consistent. */
+body,
+button,
+input,
+select,
+textarea,
+.btn,
+.form-control,
+.form-select,
+.table,
+.navbar,
+.dropdown-menu {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading,
+.navbar-brand,
+.navbar-nav .nav-link,
+.card-header,
+.table thead th,
+.badge,
+.price-display,
+.amount-display {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
