@@ -24,6 +24,7 @@ public class AdminCustomerOrderController {
     private final InventoryTransactionRepository inventoryTransactionRepository;
     private final CustomerRepository customerRepository;
     private final CustomerNotificationRepository notificationRepository;
+    private final CustomerVoucherRepository customerVoucherRepository;
 
     public AdminCustomerOrderController(
             CustomerOrderRepository customerOrderRepository,
@@ -36,7 +37,8 @@ public class AdminCustomerOrderController {
             IngredientRepository ingredientRepository,
             InventoryTransactionRepository inventoryTransactionRepository,
             CustomerRepository customerRepository,
-            CustomerNotificationRepository notificationRepository) {
+            CustomerNotificationRepository notificationRepository,
+            CustomerVoucherRepository customerVoucherRepository) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderDetailRepository = customerOrderDetailRepository;
         this.ordersRepository = ordersRepository;
@@ -48,6 +50,7 @@ public class AdminCustomerOrderController {
         this.inventoryTransactionRepository = inventoryTransactionRepository;
         this.customerRepository = customerRepository;
         this.notificationRepository = notificationRepository;
+        this.customerVoucherRepository = customerVoucherRepository;
     }
 
     @GetMapping
@@ -161,6 +164,14 @@ public class AdminCustomerOrderController {
         if (customerOrder != null && "PENDING".equals(customerOrder.getStatus())) {
             customerOrder.setStatus("CANCELLED");
             customerOrderRepository.save(customerOrder);
+            if (customerOrder.getVoucher() != null && customerOrder.getCustomer() != null) {
+                customerVoucherRepository.findByCustomerCustomerIdAndVoucherVoucherId(
+                                customerOrder.getCustomer().getCustomerId(), customerOrder.getVoucher().getVoucherId())
+                        .ifPresent(customerVoucher -> {
+                            customerVoucher.setStatus("AVAILABLE");
+                            customerVoucherRepository.save(customerVoucher);
+                        });
+            }
             createNotification(customerOrder, "Đơn hàng đã bị hủy", "Đơn #" + customerOrder.getOrderId() + " đã được quán hủy. Vui lòng liên hệ quán nếu cần hỗ trợ.");
         }
         return "redirect:/admin/customer-orders";

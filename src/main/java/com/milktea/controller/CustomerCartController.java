@@ -175,7 +175,7 @@ public class CustomerCartController {
                 && (voucher.getStartDate() == null || !today.isBefore(voucher.getStartDate()))
                 && (voucher.getEndDate() == null || !today.isAfter(voucher.getEndDate()));
         boolean owned = voucher != null && customerVoucherRepository
-                .existsByCustomerCustomerIdAndVoucherVoucherCodeIgnoreCase(customer.getCustomerId(), normalizedCode);
+                .existsByCustomerCustomerIdAndVoucherVoucherCodeIgnoreCaseAndStatus(customer.getCustomerId(), normalizedCode, "AVAILABLE");
 
         if (!active) {
             redirectAttributes.addFlashAttribute("errorMessage", "Mã voucher không tồn tại hoặc đã hết hạn.");
@@ -247,6 +247,14 @@ public class CustomerCartController {
             order.setOrderDate(new Date());
             order.setStatus("PENDING");
             customerOrderRepository.save(order);
+            if (order.getVoucher() != null) {
+                customerVoucherRepository.findByCustomerCustomerIdAndVoucherVoucherId(
+                                customer.getCustomerId(), order.getVoucher().getVoucherId())
+                        .ifPresent(customerVoucher -> {
+                            customerVoucher.setStatus("USED");
+                            customerVoucherRepository.save(customerVoucher);
+                        });
+            }
         }
 
         return "redirect:/customer/orders";
