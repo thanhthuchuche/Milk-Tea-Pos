@@ -15,6 +15,10 @@ public class Voucher {
 
     private Integer discountPercent;
 
+    private Integer requiredPoints;
+
+    private String rewardDescription;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
@@ -44,6 +48,22 @@ public class Voucher {
 
     public void setDiscountPercent(Integer discountPercent) {
         this.discountPercent = discountPercent;
+    }
+
+    public Integer getRequiredPoints() {
+        return requiredPoints;
+    }
+
+    public void setRequiredPoints(Integer requiredPoints) {
+        this.requiredPoints = requiredPoints;
+    }
+
+    public String getRewardDescription() {
+        return rewardDescription;
+    }
+
+    public void setRewardDescription(String rewardDescription) {
+        this.rewardDescription = rewardDescription;
     }
 
     public LocalDate getStartDate() {

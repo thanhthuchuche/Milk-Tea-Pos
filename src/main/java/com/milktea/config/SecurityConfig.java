@@ -64,6 +64,11 @@ public class SecurityConfig {
                                 "/customer-menu/**",
                                 "/customer/dashboard",
                                 "/customer/account/**",
+                                "/customer/favorites",
+                                "/customer/favorite/**",
+                                "/customer/product/**",
+                                "/customer/notifications",
+                                "/customer/rewards/**",
                                 "/customer-cart/**",
                                 "/customer-order/**",
                                 "/customer/orders",
@@ -92,6 +97,7 @@ public class SecurityConfig {
                                 "/tables/**",
                                 "/transactions/**",
                                 "/product-ingredients/**",
+                                "/admin/product-reviews/**",
                                 "/table-payment/**"
                         ).hasAnyRole("ADMIN", "STAFF")
 

@@ -6,6 +6,8 @@ import com.milktea.repository.CustomerOrderDetailRepository;
 import com.milktea.repository.CustomerOrderRepository;
 import com.milktea.repository.CustomerRepository;
 import com.milktea.repository.VoucherRepository;
+import com.milktea.repository.CustomerNotificationRepository;
+import com.milktea.repository.CustomerFavoriteRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -25,16 +27,22 @@ public class CustomerAccountController {
     private final CustomerOrderRepository customerOrderRepository;
     private final CustomerOrderDetailRepository customerOrderDetailRepository;
     private final VoucherRepository voucherRepository;
+    private final CustomerNotificationRepository notificationRepository;
+    private final CustomerFavoriteRepository favoriteRepository;
 
     public CustomerAccountController(
             CustomerRepository customerRepository,
             CustomerOrderRepository customerOrderRepository,
             CustomerOrderDetailRepository customerOrderDetailRepository,
-            VoucherRepository voucherRepository) {
+            VoucherRepository voucherRepository,
+            CustomerNotificationRepository notificationRepository,
+            CustomerFavoriteRepository favoriteRepository) {
         this.customerRepository = customerRepository;
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderDetailRepository = customerOrderDetailRepository;
         this.voucherRepository = voucherRepository;
+        this.notificationRepository = notificationRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @GetMapping("/customer/dashboard")
@@ -77,6 +85,8 @@ public class CustomerAccountController {
         model.addAttribute("pendingOrders", pendingOrders);
         model.addAttribute("completedOrders", completedOrders);
         model.addAttribute("totalSpent", totalSpent);
+        model.addAttribute("favoriteCount", favoriteRepository.findByCustomerCustomerIdOrderByCreatedAtDesc(customer.getCustomerId()).size());
+        model.addAttribute("unreadNotifications", notificationRepository.countByCustomerCustomerIdAndReadFalse(customer.getCustomerId()));
         model.addAttribute("vouchers", voucherRepository.findAll().stream()
                 .filter(voucher -> voucher.getStartDate() == null || !today.isBefore(voucher.getStartDate()))
                 .filter(voucher -> voucher.getEndDate() == null || !today.isAfter(voucher.getEndDate()))

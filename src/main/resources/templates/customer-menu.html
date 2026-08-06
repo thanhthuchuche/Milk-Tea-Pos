@@ -318,6 +318,11 @@
                         <img th:src="${product.image != null and #strings.startsWith(product.image, 'http') ? product.image : '/images/' + product.image}" 
                              alt="Hình sản phẩm"
                              loading="lazy">
+                        <a class="position-absolute top-0 end-0 m-2 btn btn-light rounded-circle shadow-sm"
+                           th:href="@{/customer/favorite/toggle/{id}(id=${product.productId}, back='/customer/menu')}"
+                           th:title="${favoriteProductIds.contains(product.productId) ? 'Bỏ yêu thích' : 'Thêm yêu thích'}">
+                            <i th:class="${favoriteProductIds.contains(product.productId) ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-secondary'}"></i>
+                        </a>
                     </div>
                     
                     <div class="card-body d-flex flex-column p-3">
@@ -326,6 +331,7 @@
                             <span class="badge bg-light text-muted fw-bold">Giao nhanh</span>
                         </div>
                         <h5 class="fw-bold product-name mb-1 text-truncate text-dark" th:text="${product.productName}">Tên sản phẩm</h5>
+                        <a class="small text-primary mb-2" th:href="@{/customer/product/{id}(id=${product.productId})}"><i class="fa-solid fa-circle-info me-1"></i>Xem chi tiết &amp; đánh giá</a>
                         <p class="text-muted small text-truncate-2 mb-3" style="min-height: 38px; line-height: 1.4;" th:text="${product.description}">Mô tả sản phẩm thơm ngon chuẩn vị</p>
                         
                         <div class="mt-auto pt-2 border-top">

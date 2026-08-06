@@ -106,6 +106,21 @@
                         <i class="fa-solid fa-user-pen me-1 opacity-75"></i> Tài khoản
                     </a>
                 </li>
+                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
+                    <a class="nav-link" th:href="@{/customer/favorites}">
+                        <i class="fa-solid fa-heart me-1 text-danger"></i> Món đã lưu
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
+                    <a class="nav-link" th:href="@{/customer/notifications}">
+                        <i class="fa-solid fa-bell me-1 text-warning"></i> Thông báo
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
+                    <a class="nav-link" th:href="@{/customer/rewards}">
+                        <i class="fa-solid fa-gift me-1 text-warning"></i> Đổi điểm
+                    </a>
+                </li>
 
                 <!-- Products & Inventory Dropdown -->
                 <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN','STAFF')">
@@ -116,6 +131,11 @@
                         <li>
                             <a class="dropdown-item" href="/products">
                                 <i class="fa-solid fa-wine-glass me-2 text-primary"></i> Quản lý sản phẩm
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/admin/product-reviews">
+                                <i class="fa-solid fa-star me-2 text-warning"></i> Đánh giá sản phẩm
                             </a>
                         </li>
                         <li sec:authorize="hasRole('ADMIN')">

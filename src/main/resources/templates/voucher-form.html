@@ -76,6 +76,17 @@
 
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Điểm cần đổi</label>
+                            <input type="number" min="1" th:field="*{requiredPoints}" class="form-control" placeholder="Ví dụ: 100 điểm">
+                            <small class="text-muted">Để khách hàng đổi voucher bằng điểm thành viên.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mô tả phần thưởng</label>
+                            <input type="text" th:field="*{rewardDescription}" class="form-control" placeholder="Ví dụ: Voucher giảm 20% cho thành viên">
+                        </div>
+
                         <div class="alert alert-info">
 
                             <i class="fa-solid fa-circle-info"></i>

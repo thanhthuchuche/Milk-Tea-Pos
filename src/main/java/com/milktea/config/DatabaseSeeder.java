@@ -200,6 +200,14 @@ public class DatabaseSeeder implements CommandLineRunner {
             createVoucher("CHAOCUAHANG", 10);
             createVoucher("CODAOQUAN20", 20);
             createVoucher("TRIANVIP30", 30);
+        } else {
+            voucherRepository.findAll().stream()
+                    .filter(voucher -> voucher.getRequiredPoints() == null)
+                    .forEach(voucher -> {
+                        voucher.setRequiredPoints(Math.max(50, (voucher.getDiscountPercent() == null ? 10 : voucher.getDiscountPercent()) * 5));
+                        voucher.setRewardDescription("Voucher giảm " + voucher.getDiscountPercent() + "% cho thành viên.");
+                        voucherRepository.save(voucher);
+                    });
         }
     }
 
@@ -233,6 +241,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         Voucher v = new Voucher();
         v.setVoucherCode(code);
         v.setDiscountPercent(discount);
+        v.setRequiredPoints(discount * 5);
+        v.setRewardDescription("Voucher giảm " + discount + "% cho thành viên.");
         v.setStartDate(LocalDate.now());
         v.setEndDate(LocalDate.now().plusMonths(3));
         voucherRepository.save(v);

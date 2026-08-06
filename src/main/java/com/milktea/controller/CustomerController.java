@@ -2,6 +2,7 @@ package com.milktea.controller;
 
 import com.milktea.entity.Customer;
 import com.milktea.repository.CustomerRepository;
+import com.milktea.repository.CustomerFavoriteRepository;
 import com.milktea.service.CategoryService;
 import com.milktea.service.CustomerService;
 import com.milktea.service.ProductService;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class CustomerController {
@@ -20,17 +22,20 @@ public class CustomerController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final CustomerRepository customerRepository;
+    private final CustomerFavoriteRepository favoriteRepository;
 
     public CustomerController(
             CustomerService customerService,
             ProductService productService,
             CategoryService categoryService,
-            CustomerRepository customerRepository) {
+            CustomerRepository customerRepository,
+            CustomerFavoriteRepository favoriteRepository) {
 
         this.customerService = customerService;
         this.productService = productService;
         this.categoryService = categoryService;
         this.customerRepository = customerRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @GetMapping("/customers")
@@ -75,6 +80,10 @@ public class CustomerController {
         model.addAttribute("customer", customer);
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("favoriteProductIds", favoriteRepository
+                .findByCustomerCustomerIdOrderByCreatedAtDesc(customer.getCustomerId()).stream()
+                .map(favorite -> favorite.getProduct().getProductId())
+                .collect(Collectors.toSet()));
         return "customer-menu";
     }
 

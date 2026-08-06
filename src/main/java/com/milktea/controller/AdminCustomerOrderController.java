@@ -22,6 +22,8 @@ public class AdminCustomerOrderController {
     private final ProductIngredientRepository productIngredientRepository;
     private final IngredientRepository ingredientRepository;
     private final InventoryTransactionRepository inventoryTransactionRepository;
+    private final CustomerRepository customerRepository;
+    private final CustomerNotificationRepository notificationRepository;
 
     public AdminCustomerOrderController(
             CustomerOrderRepository customerOrderRepository,
@@ -32,7 +34,9 @@ public class AdminCustomerOrderController {
             PaymentRepository paymentRepository,
             ProductIngredientRepository productIngredientRepository,
             IngredientRepository ingredientRepository,
-            InventoryTransactionRepository inventoryTransactionRepository) {
+            InventoryTransactionRepository inventoryTransactionRepository,
+            CustomerRepository customerRepository,
+            CustomerNotificationRepository notificationRepository) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderDetailRepository = customerOrderDetailRepository;
         this.ordersRepository = ordersRepository;
@@ -42,6 +46,8 @@ public class AdminCustomerOrderController {
         this.productIngredientRepository = productIngredientRepository;
         this.ingredientRepository = ingredientRepository;
         this.inventoryTransactionRepository = inventoryTransactionRepository;
+        this.customerRepository = customerRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @GetMapping
@@ -140,9 +146,10 @@ public class AdminCustomerOrderController {
                 if (earnedPoints > 0) {
                     int currentPoints = customer.getPoint() != null ? customer.getPoint() : 0;
                     customer.setPoint(currentPoints + earnedPoints);
-                    // customerRepository save is done via Cascade or explicit save
+                    customerRepository.save(customer);
                 }
             }
+            createNotification(customerOrder, "Đơn hàng đã được duyệt", "Đơn #" + customerOrder.getOrderId() + " đã được duyệt và chuyển sang trạng thái hoàn tất.");
         }
         return "redirect:/admin/customer-orders";
     }
@@ -153,7 +160,20 @@ public class AdminCustomerOrderController {
         if (customerOrder != null && "PENDING".equals(customerOrder.getStatus())) {
             customerOrder.setStatus("CANCELLED");
             customerOrderRepository.save(customerOrder);
+            createNotification(customerOrder, "Đơn hàng đã bị hủy", "Đơn #" + customerOrder.getOrderId() + " đã được quán hủy. Vui lòng liên hệ quán nếu cần hỗ trợ.");
         }
         return "redirect:/admin/customer-orders";
+    }
+
+    private void createNotification(CustomerOrder order, String title, String message) {
+        if (order.getCustomer() == null) return;
+        CustomerNotification notification = new CustomerNotification();
+        notification.setCustomer(order.getCustomer());
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setOrderId(order.getOrderId());
+        notification.setCreatedAt(new Date());
+        notification.setRead(false);
+        notificationRepository.save(notification);
     }
 }
